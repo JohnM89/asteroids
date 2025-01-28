@@ -26,6 +26,7 @@ def main():
                 return
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
+        player.update(dt)
         player.draw(screen)
         #refresh the screen
         #draw player before refreshing
