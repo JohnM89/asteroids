@@ -1,6 +1,7 @@
 import pygame
 #import all with wildcard (only suitable for small projects)
 from constants import *
+from player import Player
 def main():
     #initalize pygame
     pygame.init()
@@ -14,6 +15,9 @@ def main():
     #check import success
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+    x = SCREEN_WIDTH / 2
+    y = SCREEN_HEIGHT / 2
+    player = Player(x , y)
     #game loop
     while True:
         #allow game window to close
@@ -22,7 +26,9 @@ def main():
                 return
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
+        player.draw(screen)
         #refresh the screen
+        #draw player before refreshing
         pygame.display.flip()
         #pauses game loop until 1/60th of a second has passed
         #also returns delta time since last called
