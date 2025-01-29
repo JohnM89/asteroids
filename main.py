@@ -2,6 +2,8 @@ import pygame
 #import all with wildcard (only suitable for small projects)
 from constants import *
 from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
 def main():
     #initalize pygame
     pygame.init()
@@ -16,10 +18,16 @@ def main():
     #create groups to hold objects like player
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+    AsteroidField.containers = (updatable)
+
+    Asteroid.containers = (asteroids, updatable, drawable)
     #add groups to Player class containers
     Player.containers = (updatable, drawable)
+    asteroids = AsteroidField()
     #create new Player object after this update 
     player = Player(x , y)
+    
 
     #game loop
     while True:
