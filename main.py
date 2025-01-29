@@ -11,23 +11,29 @@ def main():
     dt = 0
     #set the display properties
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    print("Starting asteroids!")
-    #check import success
-    print(f"Screen width: {SCREEN_WIDTH}")
-    print(f"Screen height: {SCREEN_HEIGHT}")
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
+    #create groups to hold objects like player
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    #add groups to Player class containers
+    Player.containers = (updatable, drawable)
+    #create new Player object after this update 
     player = Player(x , y)
+
     #game loop
     while True:
         #allow game window to close
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+        #update objects
+        updatable.update(dt)
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
-        player.update(dt)
-        player.draw(screen)
+        #draw objects
+        for obj in drawable:
+            obj.draw(screen)
         #refresh the screen
         #draw player before refreshing
         pygame.display.flip()
