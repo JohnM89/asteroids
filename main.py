@@ -24,7 +24,7 @@ def main():
     Asteroid.containers = (asteroids, updatable, drawable)
     #add groups to Player class containers
     Player.containers = (updatable, drawable)
-    asteroids = AsteroidField()
+    asteroidfield = AsteroidField()
     #create new Player object after this update 
     player = Player(x , y)
     
@@ -37,6 +37,8 @@ def main():
                 return
         #update objects
         updatable.update(dt)
+        for obj in asteroids:
+            obj.collisions(player)
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
         #draw objects
