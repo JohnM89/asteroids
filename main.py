@@ -48,7 +48,7 @@ def main():
             for shot in shots:
                 if obj.collisions(shot):
                     shot.kill()
-                    obj.kill()
+                    obj.split()
         
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
