@@ -17,12 +17,19 @@ class CircleShape(pygame.sprite.Sprite):
     def draw(self, screen):
              #sub class to override
         pass
-
+    
+    #rewrite for single function to return true or false & keep game logic in main.py game loop
     def collisions(self, obj):
         distance = pygame.math.Vector2.distance_to(self.position, obj.position)
-        if distance <= (self.radius + obj.radius):
-            print("Game Over!")
-            exit()
+        return distance <= (self.radius + obj.radius)
+            #print("Game Over!")
+            #exit()
+
+    #def check_shot(self, obj):
+        #distance = pygame.math.Vector2.distance_to(self.position, obj.position)
+        #if distance <= (self.radius + obj.radius):
+            #obj.kill()
+            #self.kill()
 
     def update(self, dt):
         #sub class to override

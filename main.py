@@ -39,8 +39,17 @@ def main():
                 return
         #update objects
         updatable.update(dt)
+        #check for collisions
         for obj in asteroids:
-            obj.collisions(player)
+            #keep game logic in loop and keep object dynamic
+            if obj.collisions(player):
+                print("Game Over!")
+                exit()
+            for shot in shots:
+                if obj.collisions(shot):
+                    shot.kill()
+                    obj.kill()
+        
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
         #draw objects
