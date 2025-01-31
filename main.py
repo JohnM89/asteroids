@@ -17,7 +17,7 @@ def main():
     game_clock = pygame.time.Clock()
     #set delta time variable
     dt = 0
-    hudd = {"score": 0}
+    hudd = {"score": 0, "lives": 3}
     #set a simple scoring mechanic (using constant)
     #score_display = default_font.render(f"{score}", True, (0, 0, 0))
     #set the display properties
@@ -40,7 +40,8 @@ def main():
     asteroidfield = AsteroidField()
     #uibarbottom = UserInterface()
     #placeholder uibar for score
-    uibartop = UserInterface(HORIZONTAL_MARGIN / 6, VERTICAL_MARGIN / 4, SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", hudd)
+    uibarbottom = UserInterface((SCREEN_WIDTH - SCREEN_WIDTH / 8) - (HORIZONTAL_MARGIN / 6), (SCREEN_HEIGHT - 64) - (VERTICAL_MARGIN / 4), SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", hudd, "lives", "Lives: ")
+    uibartop = UserInterface(HORIZONTAL_MARGIN / 6, VERTICAL_MARGIN / 4, SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", hudd, "score", "Score: ")
     #create new Player object after this update
     player = Player(x , y)
     
@@ -64,6 +65,7 @@ def main():
                 #if player has more than 0 lives, on collision reset to center
                 if player.lives > 0:
                     player.lives -= 1
+                    hudd["lives"] = player.lives
                     player.position = pygame.Vector2(x , y)
                 else:
                     print("Game Over!")
