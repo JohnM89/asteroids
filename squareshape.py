@@ -13,3 +13,6 @@ class SquareShape(pygame.sprite.Sprite):
 
     def update(self, dt):
         pass
+
+    def get_hudd(self, hudd):
+        pass

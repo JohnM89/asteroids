@@ -6,15 +6,20 @@ from shot import Shot
 from asteroid import Asteroid
 from userinterface import UserInterface
 from asteroidfield import AsteroidField
+from font import FontManager
 def main():
     #initalize pygame
     pygame.init()
+    #utilize default font for time being
+    #font_manager = FontManager()
+    #font_manager.load_font("GravityRegular5", "Fonts/GravityRegular5.ttf", 24)
     #utilize Clock object to track time and control framerate
     game_clock = pygame.time.Clock()
     #set delta time variable
     dt = 0
-    #set a simple scoring mechanic 
-    score = 0
+    hudd = {"score": 0}
+    #set a simple scoring mechanic (using constant)
+    #score_display = default_font.render(f"{score}", True, (0, 0, 0))
     #set the display properties
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     x = SCREEN_WIDTH / 2
@@ -26,17 +31,17 @@ def main():
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     uibar = pygame.sprite.Group()
-    UserInterface.containers = (uibar, updatable, drawable)
+    UserInterface.containers = (uibar, drawable)
     AsteroidField.containers = (updatable)
     Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     #add groups to Player class containers
     Player.containers = (updatable, drawable)
     asteroidfield = AsteroidField()
-    #uibartop = UserInterface()
+    #uibarbottom = UserInterface()
     #placeholder uibar for score
-    uibarbottom = UserInterface(HORIZONTAL_MARGIN / 6, VERTICAL_MARGIN / 2, SCREEN_WIDTH / 4, 128)
-    #create new Player object after this update 
+    uibartop = UserInterface(HORIZONTAL_MARGIN / 6, VERTICAL_MARGIN / 4, SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", hudd)
+    #create new Player object after this update
     player = Player(x , y)
     
 
@@ -48,6 +53,10 @@ def main():
                 return
         #update objects
         updatable.update(dt)
+        #get hud data
+        for sprite in uibar:
+            if hasattr(sprite, 'get_hudd'):
+                sprite.get_hudd(hudd)
         #check for collisions
         for obj in asteroids:
             #keep game logic in loop and keep object dynamic
@@ -58,16 +67,17 @@ def main():
                     player.position = pygame.Vector2(x , y)
                 else:
                     print("Game Over!")
-                    print(f"You scored: {score}")
+                    print(f"You scored: {hudd['score']}")
                     exit()
             for shot in shots:
                 if obj.collisions(shot):
                     shot.kill()
-                    score += 1
+                    hudd["score"] += 1
                     obj.split()
         
         #fill screen Surface
         pygame.Surface.fill(screen, (0,0,0))
+        #font_manager.render_text(screen , f"{score}", "GravityRegular5", (255, 255, 255), (50, 50))
         #draw objects
         for obj in drawable:
             obj.draw(screen)
