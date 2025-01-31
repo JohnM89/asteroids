@@ -8,6 +8,8 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
+        #set a lives value starting with 3
+        self.lives = 3
     #define the triangle
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)

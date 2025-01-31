@@ -4,6 +4,7 @@ from constants import *
 from player import Player
 from shot import Shot
 from asteroid import Asteroid
+from userinterface import UserInterface
 from asteroidfield import AsteroidField
 def main():
     #initalize pygame
@@ -12,21 +13,29 @@ def main():
     game_clock = pygame.time.Clock()
     #set delta time variable
     dt = 0
+    #set a simple scoring mechanic 
+    score = 0
     #set the display properties
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
+    
     #create groups to hold objects like player
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    uibar = pygame.sprite.Group()
+    UserInterface.containers = (uibar, updatable, drawable)
     AsteroidField.containers = (updatable)
     Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     #add groups to Player class containers
     Player.containers = (updatable, drawable)
     asteroidfield = AsteroidField()
+    #uibartop = UserInterface()
+    #placeholder uibar for score
+    uibarbottom = UserInterface(HORIZONTAL_MARGIN / 6, VERTICAL_MARGIN / 2, SCREEN_WIDTH / 4, 128)
     #create new Player object after this update 
     player = Player(x , y)
     
@@ -43,11 +52,18 @@ def main():
         for obj in asteroids:
             #keep game logic in loop and keep object dynamic
             if obj.collisions(player):
-                print("Game Over!")
-                exit()
+                #if player has more than 0 lives, on collision reset to center
+                if player.lives > 0:
+                    player.lives -= 1
+                    player.position = pygame.Vector2(x , y)
+                else:
+                    print("Game Over!")
+                    print(f"You scored: {score}")
+                    exit()
             for shot in shots:
                 if obj.collisions(shot):
                     shot.kill()
+                    score += 1
                     obj.split()
         
         #fill screen Surface
