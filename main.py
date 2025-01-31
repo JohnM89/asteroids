@@ -64,9 +64,13 @@ def main():
             if obj.collisions(player):
                 #if player has more than 0 lives, on collision reset to center
                 if player.lives > 0:
-                    player.lives -= 1
-                    hudd["lives"] = player.lives
-                    player.position = pygame.Vector2(x , y)
+                    #prevent multiple lost lives in short span with spawn timer
+                    if player.respawn_timer <= 0:
+                        player.lives -= 1
+                        player.respawn_timer = PLAYER_RESPAWN_TIMER
+                        hudd["lives"] = player.lives
+                        player.position = pygame.Vector2(x , y)
+        
                 else:
                     print("Game Over!")
                     print(f"You scored: {hudd['score']}")
@@ -91,6 +95,7 @@ def main():
         game_clock.tick(60)
         #get return value from Clock object to track time passed and divide by 1000 to convert from ms to seconds
         dt = game_clock.get_time() / 1000
+        
         
 
 

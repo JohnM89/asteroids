@@ -8,6 +8,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
+        self.respawn_timer = PLAYER_RESPAWN_TIMER
         #set a lives value starting with 3
         self.lives = 3
     #define the triangle
@@ -35,6 +36,8 @@ class Player(CircleShape):
             self.timer = PLAYER_SHOOT_COOLDOWN
         #listener for a,w,s,d, and calling respective movement functions
     def update(self, dt):
+        if self.respawn_timer > 0:
+            self.respawn_timer -= dt
         if self.timer > 0:
             self.timer -= dt
         keys = pygame.key.get_pressed()
