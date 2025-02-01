@@ -7,9 +7,10 @@ class Player(CircleShape):
     def __init__(self, x , y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.velocity = pygame.Vector2(0, 0)
         self.timer = 0
-        self.player_colour = (255, 255, 255)
-        self.flicker_colour = (255, 0 , 0)
+        self.player_colour = PLAYER_COLOUR
+        self.flicker_colour = FLICKER_COLOUR
         self.current_colour = self.player_colour
         self.time_since_change = 0
         self.flash_interval = FLASH_INTERVAL
@@ -30,10 +31,24 @@ class Player(CircleShape):
     #set rotation based on turn speed and delta time
     def rotate(self, dt):
         self.rotation += (PLAYER_TURN_SPEED * dt)
+        self.position.rotate(self.rotation)
     #update position based on vector , speed and delta time
     def move(self, dt):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        if dt >= 0:
+            forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        elif dt < 0:
+            forward = pygame.Vector2(0, -1).rotate(self.rotation)
+        if self.velocity.length() < PLAYER_SPEED:
+            acceleration = forward * ACCELERATION
+            self.velocity += acceleration * dt  
+            self.velocity *= DRAG_COEFFICENT
+            self.position += self.velocity * dt
+
+    def lingering_movement(self, dt):
+        self.velocity *= DRAG_COEFFICENT
+        self.position += self.velocity * dt
+
+
     def shoot(self, position):
         if self.timer <= 0:
             shot = Shot(position.x, position.y)
@@ -48,6 +63,7 @@ class Player(CircleShape):
             if self.time_since_change >= self.flash_interval:
                 if self.current_colour == self.player_colour:
                     self.current_colour = self.flicker_colour
+                    self.time_since_change = 0
                 else:
                     self.current_colour = self.player_colour
         #listener for a,w,s,d, and calling respective movement functions
@@ -66,6 +82,7 @@ class Player(CircleShape):
     def update(self, dt):
         self.respawn_timer_fn(dt)
         self.shoot_timer(dt)
+        self.lingering_movement(dt)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.shoot(self.position)
