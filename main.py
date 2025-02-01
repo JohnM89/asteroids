@@ -68,6 +68,7 @@ def main():
                     if player.respawn_timer <= 0:
                         player.lives -= 1
                         player.respawn_timer = PLAYER_RESPAWN_TIMER
+                        player.respawn_flash = True
                         hudd["lives"] = player.lives
                         player.position = pygame.Vector2(x , y)
         

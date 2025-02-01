@@ -8,6 +8,11 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
+        self.player_colour = (255, 255, 255)
+        self.flicker_colour = (255, 0 , 0)
+        self.current_colour = self.player_colour
+        self.time_since_change = 0
+        self.flash_interval = FLASH_INTERVAL
         self.respawn_timer = PLAYER_RESPAWN_TIMER
         #set a lives value starting with 3
         self.lives = 3
@@ -21,7 +26,7 @@ class Player(CircleShape):
         return [a, b, c]
     #draw updated object to screen
     def draw(self, screen):
-        pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), width=2)
+            pygame.draw.polygon(screen, self.current_colour, self.triangle(), width=2)
     #set rotation based on turn speed and delta time
     def rotate(self, dt):
         self.rotation += (PLAYER_TURN_SPEED * dt)
@@ -34,12 +39,33 @@ class Player(CircleShape):
             shot = Shot(position.x, position.y)
             shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
             self.timer = PLAYER_SHOOT_COOLDOWN
-        #listener for a,w,s,d, and calling respective movement functions
-    def update(self, dt):
+
+    def handle_colour(self, dt):
         if self.respawn_timer > 0:
-            self.respawn_timer -= dt
+            self.respawn_timer -= dt    
+            self.time_since_change += dt    
+
+            if self.time_since_change >= self.flash_interval:
+                if self.current_colour == self.player_colour:
+                    self.current_colour = self.flicker_colour
+                else:
+                    self.current_colour = self.player_colour
+        #listener for a,w,s,d, and calling respective movement functions
+
+    def shoot_timer(self, dt):
         if self.timer > 0:
-            self.timer -= dt
+            self.timer -= dt    
+
+    def respawn_timer_fn(self, dt):
+        if self.respawn_timer > 0:
+            self.respawn_timer -= dt    
+            self.handle_colour(dt)
+        if self.respawn_timer <= 0:
+            self.current_colour = self.player_colour
+
+    def update(self, dt):
+        self.respawn_timer_fn(dt)
+        self.shoot_timer(dt)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.shoot(self.position)
