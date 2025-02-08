@@ -4,9 +4,12 @@ from constants import *
 from shot import *
 
 class Player(CircleShape):
-    def __init__(self, x , y):
+    def __init__(self, x , y, shot_class, updatable, drawable):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shots = shot_class
+        self.updatable = updatable
+        self.drawable = drawable
         self.velocity = pygame.Vector2(0, 0)
         self.timer = 0
         self.player_colour = PLAYER_COLOUR
@@ -17,6 +20,13 @@ class Player(CircleShape):
         self.respawn_timer = PLAYER_RESPAWN_TIMER
         #set a lives value starting with 3
         self.lives = 3
+
+
+        self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
+        self.image = self.image.convert_alpha()  # Ensure it supports alpha channel for transparency
+
+        # Set the rect attribute based on the surface
+        #self.rect = self.image.get_rect(center=(x, y))
     #define the triangle
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -30,8 +40,9 @@ class Player(CircleShape):
             pygame.draw.polygon(screen, self.current_colour, self.triangle(), width=2)
     #set rotation based on turn speed and delta time
     def rotate(self, dt):
+        
         self.rotation += (PLAYER_TURN_SPEED * dt)
-        self.position.rotate(self.rotation)
+        #self.position.rotate(self.rotation)
     #update position based on vector , speed and delta time
     def move(self, dt):
         if dt >= 0:
@@ -43,7 +54,7 @@ class Player(CircleShape):
             self.velocity += acceleration * dt  
             self.velocity *= DRAG_COEFFICENT
             self.position += self.velocity * dt
-
+    #continue flying after stopping acceleration
     def lingering_movement(self, dt):
         self.velocity *= DRAG_COEFFICENT
         self.position += self.velocity * dt
@@ -52,6 +63,9 @@ class Player(CircleShape):
     def shoot(self, position):
         if self.timer <= 0:
             shot = Shot(position.x, position.y)
+            self.shots.add(shot)
+            self.updatable.add(shot)
+            self.drawable.add(shot)
             shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
             self.timer = PLAYER_SHOOT_COOLDOWN
 

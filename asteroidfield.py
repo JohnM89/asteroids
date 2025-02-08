@@ -33,15 +33,22 @@ class AsteroidField(pygame.sprite.Sprite):
         ],
     ]
 
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self, self.containers)
+    def __init__(self, asteroids, updatable, drawable):
+        #pygame.sprite.Sprite.__init__(self, self.containers)
+        pygame.sprite.Sprite.__init__(self)
         #initalize timer at 0
+        self.asteroids = asteroids
+        self.updatable = updatable
+        self.drawable = drawable
         self.spawn_timer = 0.0
 
     def spawn(self, radius, position, velocity):
         asteroid = Asteroid(position.x, position.y, radius)
         #update asteroid with given velocity
         asteroid.velocity = velocity
+        self.asteroids.add(asteroid)
+        self.updatable.add(asteroid)
+        self.drawable.add(asteroid)
 
     def update(self, dt):
         self.spawn_timer += dt

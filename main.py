@@ -11,8 +11,6 @@ def main():
     #initalize pygame
     pygame.init()
     #utilize default font for time being
-    #font_manager = FontManager()
-    #font_manager.load_font("GravityRegular5", "Fonts/GravityRegular5.ttf", 24)
     #utilize Clock object to track time and control framerate
     game_clock = pygame.time.Clock()
     #set delta time variable

@@ -6,11 +6,17 @@ from constants import *
 class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x , y, radius)
+        
+        self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
+        self.image = self.image.convert_alpha()  # Ensure it supports alpha channel for transparency
+
+        # Set the rect attribute based on the surface
+        #self.rect = self.image.get_rect(center=(x, y))
     #draw as circle with white colouring
     def draw(self, screen):
         pygame.draw.circle(screen,(255,255,255), self.position, self.radius, width=2)
     #split method for breaking up asteroid on collision with shot
-    def split(self):
+    def split(self, updatable, drawable, asteroid):
         self.kill()
         #if radius is less than or equal to the min radius do nothing
         if self.radius <= ASTEROID_MIN_RADIUS:
@@ -28,6 +34,9 @@ class Asteroid(CircleShape):
             asteroid1.velocity = vector1 * 1.2    
             asteroid2 = Asteroid(self.position.x, self.position.y, radius)
             asteroid2.velocity = vector2 * 1.2
+            updatable.add(asteroid1, asteroid2)
+            drawable.add(asteroid1, asteroid2)
+            asteroid.add(asteroid1, asteroid2)
     def update(self, dt):
         self.position += (self.velocity * dt)
 
