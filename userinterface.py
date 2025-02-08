@@ -17,10 +17,8 @@ class UserInterface(SquareShape):
         self.text = f"{self.ui_text}{self.hudd[self.key]}"
         
         self.image = pygame.Surface((w, h), pygame.SRCALPHA)
-        self.image = self.image.convert_alpha()  # Ensure it supports alpha channel for transparency
+        self.image = self.image.convert_alpha()      
 
-        # Set the rect attribute based on the surface
-        #self.rect = self.image.get_rect(center=(x, y))
     def draw(self, screen):
         #ui box, will hold score, lives and powerups etc...
         pygame.draw.rect(screen, (255, 255, 255), self.rect, width=2, border_radius=2)

@@ -8,10 +8,8 @@ class Asteroid(CircleShape):
         super().__init__(x , y, radius)
         
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
-        self.image = self.image.convert_alpha()  # Ensure it supports alpha channel for transparency
+        self.image = self.image.convert_alpha()  
 
-        # Set the rect attribute based on the surface
-        #self.rect = self.image.get_rect(center=(x, y))
     #draw as circle with white colouring
     def draw(self, screen):
         pygame.draw.circle(screen,(255,255,255), self.position, self.radius, width=2)

@@ -42,6 +42,15 @@ class Level1(State):
                     shot.kill()
                     self.hudd["score"] += 1 
                     obj.split(self.updatable, self.drawable, self.asteroids)
+        #simple boundary wrapping for player need to put in player class
+        if self.player.position.x > self.SCREEN_WIDTH:
+            self.player.position.x = 0
+        if self.player.position.x < 0:
+            self.player.position.x = self.SCREEN_WIDTH
+        if self.player.position.y > self.SCREEN_HEIGHT:
+            self.player.position.y = 0
+        if self.player.position.y < 0:
+            self.player.position.y = self.SCREEN_HEIGHT
 
     def update(self, dt):
         super().update(dt)

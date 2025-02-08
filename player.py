@@ -21,11 +21,11 @@ class Player(CircleShape):
         #set a lives value starting with 3
         self.lives = 3
 
-
+        #requirement for utilizing sprite groups, currently just set to transparent
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
-        self.image = self.image.convert_alpha()  # Ensure it supports alpha channel for transparency
+        self.image = self.image.convert_alpha() 
 
-        # Set the rect attribute based on the surface
+        
         #self.rect = self.image.get_rect(center=(x, y))
     #define the triangle
     def triangle(self):

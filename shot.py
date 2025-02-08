@@ -7,11 +7,8 @@ class Shot(CircleShape):
         super().__init__(x, y, SHOT_RADIUS)
         
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
-        self.image = self.image.convert_alpha()  # Ensure it supports alpha channel for transparency
-
-        # Set the rect attribute based on the surface
-        #self.rect = self.image.get_rect(center=(x, y))
-
+        self.image = self.image.convert_alpha()  
+       
     def draw(self, screen):
         pygame.draw.circle(screen,(255,255,255), self.position, self.radius, width=2)
     
