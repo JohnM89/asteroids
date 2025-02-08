@@ -5,6 +5,7 @@ from shot import Shot
 from asteroid import Asteroid   
 from asteroidfield import AsteroidField
 from constants import *
+import random
 import pygame   
 
 class Level1(State):
@@ -26,13 +27,31 @@ class Level1(State):
 
     def collision_check(self):
         for obj in self.asteroids:
+            #find a way to make objects collide on occasion randomly
+            #if obj.collisions(obj in self.asteroids):
+                #if randint(1, 100) > 80:
+                
+
             if obj.collisions(self.player):
                 if self.player.lives > 0:
                     if self.player.respawn_timer <= 0:
                         self.player.lives -= 1  
                         self.player.respawn_timer = PLAYER_RESPAWN_TIMER
+                        
                         self.hudd["lives"] = self.player.lives
-                        self.player.position = pygame.Vector2(self.x, self.y)
+                        
+                        #make player and object trajectory and velcocity change after collision needs work !
+                        #add and use mass property to determine return velocity?
+                        temp_velocity = obj.velocity
+                        previous_player_velocity = self.player.velocity
+                        previous_player_velocity *= DRAG_COEFFICENT
+                        temp_velocity *= DRAG_COEFFICENT
+                        self.player.velocity = temp_velocity
+                        obj.velocity = previous_player_velocity.rotate(obj.radius * DRAG_COEFFICENT)
+                        #obj.velocity.rotate(obj.radius * DRAG_COEFFICENT)
+                        #obj.velocity.rotate(random.uniform(20, 50))
+                        #self.player.position = pygame.Vector2(obj.position.x + obj.radius, obj.position.y + obj.radius)
+
                 else:
                     print("Game Over!")
                     self.exit_state()

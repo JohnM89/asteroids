@@ -60,6 +60,10 @@ class Player(CircleShape):
         self.position += self.velocity * dt
 
 
+        
+        
+
+
     def shoot(self, position):
         if self.timer <= 0:
             shot = Shot(position.x, position.y)
