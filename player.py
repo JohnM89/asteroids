@@ -24,20 +24,26 @@ class Player(CircleShape):
         #requirement for utilizing sprite groups, currently just set to transparent
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha() 
+        self.rect = self.image.get_rect(center=(self.position))
 
         
         #self.rect = self.image.get_rect(center=(x, y))
     #define the triangle
     def triangle(self):
+        position = (self.radius , self.radius)
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
-        a = self.position + forward * self.radius
-        b = self.position - forward * self.radius - right
-        c = self.position - forward * self.radius + right
+        a = position + forward * self.radius
+        b = position - forward * self.radius - right
+        c = position - forward * self.radius + right
         return [a, b, c]
     #draw updated object to screen
-    def draw(self, screen):
-            pygame.draw.polygon(screen, self.current_colour, self.triangle(), width=2)
+    def draw(self):
+        self.image.fill((0,0,0,0))
+            #pygame.draw.polygon(screen, self.current_colour, self.triangle(), width=2)
+        #pygame.draw.polygon(self.image, self.current_colour, self.triangle(), width=2)
+        pygame.draw.circle(self.image, self.current_colour,(self.radius, self.radius), self.radius, width=2 )
+        #canvas.blit(self.image, self.rect)
     #set rotation based on turn speed and delta time
     def rotate(self, dt):
         
@@ -61,7 +67,7 @@ class Player(CircleShape):
 
 
         
-        
+       
 
 
     def shoot(self, position):
@@ -101,6 +107,7 @@ class Player(CircleShape):
         self.respawn_timer_fn(dt)
         self.shoot_timer(dt)
         self.lingering_movement(dt)
+        self.rect.center = (self.position)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.shoot(self.position)
@@ -112,4 +119,5 @@ class Player(CircleShape):
             self.rotate(dt * -1)
         if keys[pygame.K_d]:
             self.rotate(dt)
+        #self.rect.center = (self.position.x, self.position.y)
 

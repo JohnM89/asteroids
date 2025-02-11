@@ -29,7 +29,7 @@ class Game():
         self.state_stack.append(self.default_state)                  
             
     def get_dt(self):
-        self.game_clock.tick(60)
+        #self.game_clock.tick(60)
         now = pygame.time.get_ticks()
         self.dt = (now - self.prev_time) / 1000.00
         self.prev_time = now

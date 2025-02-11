@@ -21,9 +21,11 @@ class Title(State):
     
     def draw(self):
         #pass
-        #super().draw(self.screen)
+        super().draw()
+        #self.canvas.fill((0, 0, 0))
         for obj in self.drawable:
-            obj.draw(self.screen)
-        
+            obj.draw()
+            self.canvas.blit(obj.image, obj.rect)
+        self.screen.blit(self.canvas, (0,0), self.camera.camera_box)
         #self.screen.fill((254, 0, 0))
-        #self.title_box.draw(self.screen)
+        #self.title_box.draw()

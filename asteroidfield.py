@@ -13,23 +13,24 @@ class AsteroidField(pygame.sprite.Sprite):
             #lambda function to generate a starting position for the asteroid on the screen's edge
             #ASTEROID_MAX_RADIUS ensures the asteroid starts off screen
             #y is the multiplyer for SCREEN_HEIGHT ( or x for SCREEN_WIDTH below) determining where along the edge the asteroid will appear
-            lambda y: pygame.Vector2(-ASTEROID_MAX_RADIUS, y * SCREEN_HEIGHT),
+            #updating screen for game height after adding camera class  
+            lambda y: pygame.Vector2(-ASTEROID_MAX_RADIUS, y * GAME_HEIGHT),
         ],
         [
             #points left on x-axis
             pygame.Vector2(-1,0),
-            lambda y: pygame.Vector2(SCREEN_WIDTH + ASTEROID_MAX_RADIUS, y * SCREEN_HEIGHT),
+            lambda y: pygame.Vector2(GAME_WIDTH + ASTEROID_MAX_RADIUS, y * GAME_HEIGHT),
         ],
         [
             #points up on y-axis
             pygame.Vector2(0,1),
-            lambda x: pygame.Vector2(x * SCREEN_WIDTH, -ASTEROID_MAX_RADIUS),
+            lambda x: pygame.Vector2(x * GAME_WIDTH, -ASTEROID_MAX_RADIUS),
 
         ],
         [
             #points down on y-axis
             pygame.Vector2(0,-1),
-            lambda x: pygame.Vector2(x * SCREEN_WIDTH, SCREEN_HEIGHT + ASTEROID_MAX_RADIUS),
+            lambda x: pygame.Vector2(x * GAME_WIDTH, GAME_HEIGHT + ASTEROID_MAX_RADIUS),
         ],
     ]
 

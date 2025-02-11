@@ -7,12 +7,15 @@ class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x , y, radius)
         
-        self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
-        self.image = self.image.convert_alpha()  
+        self.image = pygame.Surface((2*self.radius, 2*self.radius))
+        self.image = self.image.convert_alpha()
+        self.rect = self.image.get_rect(center=(self.position))
 
     #draw as circle with white colouring
-    def draw(self, screen):
-        pygame.draw.circle(screen,(255,255,255), self.position, self.radius, width=2)
+    def draw(self):
+        self.image.fill((0,0,0,0))
+        pygame.draw.circle(self.image,(255,255,255), (self.radius, self.radius), self.radius, width=2)
+        #canvas.blit(self.image,self.rect)
     #split method for breaking up asteroid on collision with shot
     def split(self, updatable, drawable, asteroid):
         self.kill()
@@ -37,4 +40,4 @@ class Asteroid(CircleShape):
             asteroid.add(asteroid1, asteroid2)
     def update(self, dt):
         self.position += (self.velocity * dt)
-
+        self.rect.center = self.position
