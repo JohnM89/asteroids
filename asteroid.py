@@ -4,7 +4,7 @@ from circleshape import *
 from constants import *
 #created in AsteroidField class
 class Asteroid(CircleShape):
-    def __init__(self, x, y, radius, space):
+    def __init__(self, x, y, radius, space, mass=5.0):
         super().__init__(x , y, radius)
         
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
@@ -13,8 +13,13 @@ class Asteroid(CircleShape):
         self.rect.center = (int(self.body.position.x), int(self.body.position.y))
         pygame.draw.circle(self.image, (255,255,255), (self.radius, self.radius), self.radius, width=2)
         self.space = space
-        #self.position = self.body.position
+        self.shape.friction = 9.0
+        self.shape.elasticity = 0.2
+        self.shape.collision_type = 2
+        self.shape.game_object = self
         self.time_to_live = ASTEROID_TTL
+        self.damage_accumulated = 0
+        self.split_threshold = 100
 
     #draw as circle with white colouring
     def draw(self):

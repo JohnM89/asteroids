@@ -20,7 +20,7 @@ class Player(CircleShape):
         self.time_since_change = 0
         self.flash_interval = FLASH_INTERVAL
         self.respawn_timer = PLAYER_RESPAWN_TIMER
-        #set a lives value starting with 3
+        self.shape.collision_type = 1
         self.space.add(self.body, self.shape)
         self.lives = 99
 
@@ -34,8 +34,11 @@ class Player(CircleShape):
     #define the triangle
     def triangle(self):
         position = (self.radius , self.radius)
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
+        rotation = math.radians(self.rotation)
+        #forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
+        #right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
+        right = pymunk.Vec2d(0, 1).rotated(rotation + 90) * self.radius / 1.5
         a = position + forward * self.radius
         b = position - forward * self.radius - right
         c = position - forward * self.radius + right
@@ -54,12 +57,12 @@ class Player(CircleShape):
         #self.rect.rotate(self.rotation)
     #update position based on vector , speed and delta time
     def move(self, dt):
-        if dt >= 0:
+        #if dt >= 0:
             #forward = pygame.Vector2(0, 1).rotate(self.rotation)
-            forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
-        elif dt < 0:
+        forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
+        #elif dt < 0:
             #forward = pygame.Vector2(0, -1).rotate(self.rotation)
-            forward = pymunk.Vec2d(0, -1).rotated(self.rotation)
+            #forward = pymunk.Vec2d(0, -1).rotated(self.rotation)
         #if self.velocity.length() < PLAYER_SPEED:
         if self.body.velocity.length < PLAYER_SPEED:
             acceleration = forward * ACCELERATION * dt

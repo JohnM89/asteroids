@@ -17,7 +17,6 @@ class CircleShape(pygame.sprite.Sprite):
         #self.velocity = pygame.Vector2(0, 0)
         self.radius = radius
         self.mass = mass
-        
         self.moment = pymunk.moment_for_circle(self.mass, 0, self.radius)
         self.body = pymunk.Body(self.mass, self.moment)
         self.body.position = (x, y)
@@ -34,8 +33,9 @@ class CircleShape(pygame.sprite.Sprite):
     #rewrite for single function to return true or false & keep game logic in main.py game loop
     def collisions(self, obj):
         #distance = pygame.math.Vector2.distance_to(self.position, obj.position)
-        distance = self.body.position.get_distance(obj.body.position)
-        return distance <= (self.radius + obj.radius)
+        #distance = self.body.position.get_distance(obj.body.position)
+        #return distance <= (self.radius + obj.radius)
+        pass
     
     def apply_gravity(self, obj2, dt):
         p1 = pymunk.Vec2d(self.body.position.x, self.body.position.y)

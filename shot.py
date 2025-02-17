@@ -10,6 +10,8 @@ class Shot(CircleShape):
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect()
         self.space = space
+        self.shape.collision_type = 3
+        self.shape.game_object = self
         pygame.draw.circle(self.image,(255,255,255), (self.radius, self.radius), self.radius, width=2)
         self.time_to_live = 1
     def draw(self):
