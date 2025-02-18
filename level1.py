@@ -6,6 +6,8 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from pause import Pause
 from circleshape import CircleShape
+from commonenemyspawns import * 
+from pickup import FuelDrop
 from constants import *
 import random
 import pygame  
@@ -23,32 +25,39 @@ class Level1(State):
         self.score_ui = UserInterface(128, 64, 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", self.hudd, "score", "Score: ")
         self.asteroids = pygame.sprite.Group()
         self.shots = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
         self.ui = pygame.sprite.Group()
         self.asteroidfield = AsteroidField(self.asteroids, self.updatable, self.drawable, self.space)
+        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space)
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
         self.hudd["lives"] = self.player.lives
-        self.updatable.add(self.player, self.asteroidfield, self.score_ui, self.lives_ui)
+        self.updatable.add(self.player, self.asteroidfield, self.commonenemyspawns, self.score_ui, self.lives_ui)
         self.drawable.add(self.player)
         self.player_asteroid_handler = self.space.add_collision_handler(1, 2)
         self.shot_asteroid_handler = self.space.add_collision_handler(2, 3)
         self.shot_player_handler = self.space.add_collision_handler(1, 3)
+        self.player_pickup_handler = self.space.add_collision_handler(1, 4)
 
         self.player_asteroid_handler.begin = self.begin_p_a
         self.player_asteroid_handler.post_solve = self.post_solve_p_a
         self.player_asteroid_handler.pre_solve = self.pre_solve_p_a
     
         self.shot_asteroid_handler.post_solve = self.post_solve_s_a
+
+        self.player_pickup_handler.begin = self.begin_p_p
         #self.shot_asteroid_handler.post_solve
         #self.shot_asteroid_handler.pre_solve
 
 
     #pymunk collision handling functions
+
     ###
     def post_solve_s_a(self, arbiter, space, data):
         impact_force = arbiter.total_impulse.length
         print(impact_force)
         impact_damage_threshold = 50.0
         objA, objB = arbiter.shapes
+        #objA will always be 2 (asteroid) due to how its passed ot handler so you can omit this check 
         if objB.collision_type == 3:
             shot_obj = objB.game_object
             ast_obj = objA.game_object
@@ -60,11 +69,23 @@ class Level1(State):
             self.hudd["score"] += 1
             if ast_obj.damage_accumulated >= ast_obj.split_threshold:
                 shot_obj.kill()
-                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space )
+                contact = arbiter.contact_point_set.points[0]
+                contact_point = contact.point_a
+                self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+                normal = arbiter.normal
+                impulse = arbiter.total_impulse.length
+                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point )
                 self.space.remove(shot_obj.body, shot_obj.shape)
         return True
 
-
+    def begin_p_p(self, arbiter, space, data):
+        objA, objB = arbiter.shapes
+        if objB.game_object.fuel > 0:
+            self.player.fuel += objB.game_object.fuel
+            #objA.game_object.fuel += objB.game_object.fuel
+            objB.game_object.kill()
+            self.space.remove(objB.game_object.body, objB.game_object.shape)
+        return False
     #player - asteroid handler  
     def begin_p_a(self, arbiter, space, data):
         objA, objB = arbiter.shapes
@@ -92,6 +113,11 @@ class Level1(State):
     def separate(arbiter, space, data):
         pass
     ###
+    def create_drop(self, positon_x, position_y, space, updatable, drawable):
+        new_drop = FuelDrop(positon_x, position_y, space)
+        updatable.add(new_drop)
+        drawable.add(new_drop)
+        space.add(new_drop.body, new_drop.shape)
 
     def collision_check(self):
         for obj in self.asteroids:
@@ -111,7 +137,7 @@ class Level1(State):
             self.player.body.position = (self.player.body.position.x,self.GAME_HEIGHT)
     
     def end_game(self):
-        if self.player.lives <= 0:
+        if self.player.lives <= 0 or self.player.fuel <= 0:
             self.exit_state()
 
     def update(self, dt):

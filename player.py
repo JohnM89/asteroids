@@ -21,13 +21,15 @@ class Player(CircleShape):
         self.flash_interval = FLASH_INTERVAL
         self.respawn_timer = PLAYER_RESPAWN_TIMER
         self.shape.collision_type = 1
+        self.shape.filter = pymunk.ShapeFilter(categories=0b00001)
         self.space.add(self.body, self.shape)
         self.lives = 99
+        self.fuel = 50.0
+        self.game_object = self
 
         #requirement for utilizing sprite groups, currently just set to transparent
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha() 
-        #self.rect = self.image.get_rect(center=(self.position))
         self.rect = self.image.get_rect(center=(self.body.position))
 
         
@@ -35,9 +37,7 @@ class Player(CircleShape):
     def triangle(self):
         position = (self.radius , self.radius)
         rotation = math.radians(self.rotation)
-        #forward = pygame.Vector2(0, 1).rotate(self.rotation)
         forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
-        #right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
         right = pymunk.Vec2d(0, 1).rotated(rotation + 90) * self.radius / 1.5
         a = position + forward * self.radius
         b = position - forward * self.radius - right
@@ -45,43 +45,24 @@ class Player(CircleShape):
         return [a, b, c]
     #draw updated object to screen
     def draw(self):
-        pass
+        #pass
         self.image.fill((0,0,0,0))
         pygame.draw.polygon(self.image, self.current_colour, self.triangle(), width=2)
         #pygame.draw.circle(self.image, self.current_colour,(self.radius, self.radius), self.radius, width=2 )
     #set rotation based on turn speed and delta time
     def rotate(self, dt):
-        
-        self.rotation += math.radians((PLAYER_TURN_SPEED * dt))
-        #self.body.position.rotated(self.rotation)
+        rotation = math.radians(PLAYER_TURN_SPEED * dt)
+        self.rotation += rotation
+        #self.body.velocity.rotated(self.rotation)
         #self.rect.rotate(self.rotation)
     #update position based on vector , speed and delta time
     def move(self, dt):
-        #if dt >= 0:
-            #forward = pygame.Vector2(0, 1).rotate(self.rotation)
         forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
-        #elif dt < 0:
-            #forward = pygame.Vector2(0, -1).rotate(self.rotation)
-            #forward = pymunk.Vec2d(0, -1).rotated(self.rotation)
-        #if self.velocity.length() < PLAYER_SPEED:
         if self.body.velocity.length < PLAYER_SPEED:
             acceleration = forward * ACCELERATION * dt
-            #self.velocity += acceleration * dt
-            #self.body.velocity += acceleration * dt 
             self.body.velocity *= DRAG_COEFFICENT
-            #self.velocity *= DRAG_COEFFICENT
             accel = pymunk.Vec2d(acceleration.x, acceleration.y)
             self.body.velocity += accel
-            #self.position += self.velocity * dt
-            #self.body.position = (self.position.x, self.position.y)
-    #continue flying after stopping acceleration
-    def lingering_movement(self, dt):
-        pass
-        #self.velocity *= DRAG_COEFFICENT * dt   
-        #accel = pymunk.Vec2d(acceleration.x, acceleration.y)
-        #self.body.velocity += accel
-        #self.position += self.velocity * dt
-        #self.body.position = (self.position.x, self.position.y) 
 
 
         
@@ -125,7 +106,6 @@ class Player(CircleShape):
     def update(self, dt):
         self.respawn_timer_fn(dt)
         self.shoot_timer(dt)
-        self.lingering_movement(dt)
         self.rect.center = (int(self.body.position.x), int(self.body.position.y))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
