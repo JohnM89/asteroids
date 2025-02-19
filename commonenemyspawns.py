@@ -48,9 +48,9 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         self.spawn_timer = 0.0
 
     def spawn(self, radius, position, velocity):
-        types = [FlyingSaucer(position.x, position.y, radius, self.space, self.canvas), Scourge(position.x, position.y, radius, self.space)]
+        types = [FlyingSaucer(position.x, position.y, radius, self.updatable, self.drawable, self.space, self.canvas), Scourge(position.x, position.y, radius, self.space, self.canvas)]
         #alien = random.choice(types)
-        alien = types[0]
+        alien = types[1]
         alien.body.velocity = velocity
         self.aliens.add(alien)
         self.updatable.add(alien)
@@ -87,6 +87,5 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
             velocity = velocity.rotated(random.randint(-30, 30))
             position = edge[1](random.uniform(0, 1))
             kind = random.randint(1, ALIEN_KINDS)
-            print(kind)
             self.spawn(ALIEN_MIN_RADIUS * kind, position, velocity)
             #self.spawn_centipede(ALIEN_MIN_RADIUS * kind, position, velocity,6)
