@@ -28,7 +28,7 @@ class Level1(State):
         self.aliens = pygame.sprite.Group()
         self.ui = pygame.sprite.Group()
         self.asteroidfield = AsteroidField(self.asteroids, self.updatable, self.drawable, self.space)
-        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space)
+        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space, self.canvas)
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
         self.hudd["lives"] = self.player.lives
         self.updatable.add(self.player, self.asteroidfield, self.commonenemyspawns, self.score_ui, self.lives_ui)

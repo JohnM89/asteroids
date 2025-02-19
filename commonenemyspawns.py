@@ -34,9 +34,13 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         ],
     ]
 
-    def __init__(self, aliens, updatable, drawable, space):
+    def __init__(self, aliens, updatable, drawable, space, canvas):
         
         pygame.sprite.Sprite.__init__(self)
+        #for debug
+        ##
+        self.canvas = canvas
+        ##
         self.aliens = aliens
         self.updatable = updatable
         self.drawable = drawable
@@ -44,8 +48,9 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         self.spawn_timer = 0.0
 
     def spawn(self, radius, position, velocity):
-        types = [FlyingSaucer(position.x, position.y, radius, self.space), Scourge(position.x, position.y, radius, self.space)]
-        alien = random.choice(types)        
+        types = [FlyingSaucer(position.x, position.y, radius, self.space, self.canvas), Scourge(position.x, position.y, radius, self.space)]
+        #alien = random.choice(types)
+        alien = types[0]
         alien.body.velocity = velocity
         self.aliens.add(alien)
         self.updatable.add(alien)
@@ -71,7 +76,7 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
             self.space.add(joint)
             rotation_limit = pc.RotaryLimitJoint(body_a, body_b, -0.25, 0.25)
             self.space.add(rotation_limit)
-        segments[0].body.velocity = velocity
+        #segments[0].body.velocity = velocity
     def update(self, dt):
         self.spawn_timer += dt
         if self.spawn_timer > ALIEN_SPAWN_RATE:
