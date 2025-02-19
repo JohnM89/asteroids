@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 import pymunk
 import pymunk.constraints as pc 
 from scourge import Scourge 
@@ -49,8 +50,8 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
 
     def spawn(self, radius, position, velocity):
         types = [FlyingSaucer(position.x, position.y, radius, self.updatable, self.drawable, self.space, self.canvas), Scourge(position.x, position.y, radius, self.space, self.canvas)]
-        #alien = random.choice(types)
-        alien = types[1]
+        alien = random.choice(types)
+        #alien = types[1]
         alien.body.velocity = velocity
         self.aliens.add(alien)
         self.updatable.add(alien)
@@ -62,7 +63,7 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         length = body_count
         for i in range(length):
             if i == 0:
-                segment = CentipedeHead(position.x + (i * 2 * radius), position.y, radius, self.space)
+                segment = CentipedeHead(position.x + (1 * 2 * radius), position.y, radius, self.space)
             else:
                 segment = CentipedeBody(position.x + ((i + 1)*2*radius), position.y, radius, self.space)
             segments.append(segment)
@@ -72,11 +73,14 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         for i in range(length - 1):
             body_a = segments[i].body   
             body_b = segments[i + 1].body   
-            joint = pc.PivotJoint(body_a, body_b, (0,0), (0, 0))
+            joint = pc.PinJoint(body_a, body_b, (0,0))
+            joint.collide_bodies = False
+            joint.stiffness = 1000.0
             self.space.add(joint)
-            rotation_limit = pc.RotaryLimitJoint(body_a, body_b, -0.25, 0.25)
+            rotation_limit = pc.RotaryLimitJoint(body_a, body_b, math.pi / 6, -math.pi / 6)
+            #rotation_limit.collide_bodies = False
             self.space.add(rotation_limit)
-        #segments[0].body.velocity = velocity
+        segments[0].body.velocity = velocity
     def update(self, dt):
         self.spawn_timer += dt
         if self.spawn_timer > ALIEN_SPAWN_RATE:
@@ -87,5 +91,7 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
             velocity = velocity.rotated(random.randint(-30, 30))
             position = edge[1](random.uniform(0, 1))
             kind = random.randint(1, ALIEN_KINDS)
-            self.spawn(ALIEN_MIN_RADIUS * kind, position, velocity)
-            #self.spawn_centipede(ALIEN_MIN_RADIUS * kind, position, velocity,6)
+            if kind < 3:
+                self.spawn(ALIEN_MIN_RADIUS * kind, position, velocity)
+            else:
+                self.spawn_centipede(ALIEN_MIN_RADIUS, position, velocity,6)

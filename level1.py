@@ -7,11 +7,12 @@ from asteroidfield import AsteroidField
 from pause import Pause
 from circleshape import CircleShape
 from commonenemyspawns import * 
-from pickup import FuelDrop
+from pickup import *
 from constants import *
 import random
 import pygame  
 import pymunk
+import random 
 
 class Level1(State):
     def __init__(self, game):
@@ -80,9 +81,13 @@ class Level1(State):
 
     def begin_p_p(self, arbiter, space, data):
         objA, objB = arbiter.shapes
-        if objB.game_object.fuel > 0:
+        if hasattr(objB.game_object, "fuel"):
             self.player.fuel += objB.game_object.fuel
             #objA.game_object.fuel += objB.game_object.fuel
+            objB.game_object.kill()
+            self.space.remove(objB.game_object.body, objB.game_object.shape)
+        elif hasattr(objB.game_object, "bomb"):
+            self.player.bombs += objB.game_object.bomb
             objB.game_object.kill()
             self.space.remove(objB.game_object.body, objB.game_object.shape)
         return False
@@ -113,8 +118,9 @@ class Level1(State):
     def separate(arbiter, space, data):
         pass
     ###
-    def create_drop(self, positon_x, position_y, space, updatable, drawable):
-        new_drop = FuelDrop(positon_x, position_y, space)
+    def create_drop(self, position_x, position_y, space, updatable, drawable):
+        drops = [FuelDrop(position_x,position_y, space), BombDrop(position_x, position_y, space)]
+        new_drop = random.choice(drops)
         updatable.add(new_drop)
         drawable.add(new_drop)
         space.add(new_drop.body, new_drop.shape)

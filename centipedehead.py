@@ -8,10 +8,10 @@ class CentipedeHead(CommonAlien):
         super().__init__(x , y, radius, space, colour)
         self.radius = self.radius
         self.shape.friction = 7.0
-        self.shape.elasticity = 0.6
+        self.shape.elasticity = 0.2
         self.shape.collision_type = 5
         self.shape.mass = 40 * self.radius
-        #self.shape.filter = pymunk.ShapeFilter(group=1)
+        #self.shape.filter = pymunk.ShapeFilter(group=2)
         
     def draw(self):
         pass        

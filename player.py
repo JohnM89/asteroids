@@ -24,7 +24,8 @@ class Player(CircleShape):
         self.shape.filter = pymunk.ShapeFilter(categories=0b00001)
         self.space.add(self.body, self.shape)
         self.lives = 99
-        self.fuel = 50.0
+        self.fuel = 50.0    
+        self.bombs = 0
         self.game_object = self
 
         #requirement for utilizing sprite groups, currently just set to transparent
@@ -64,6 +65,11 @@ class Player(CircleShape):
             accel = pymunk.Vec2d(acceleration.x, acceleration.y)
             self.body.velocity += accel
 
+    #def bomb(self):
+        #if self.player.bombs > 0:
+            #bomb = Bomb(position.x, position.y, space)
+            #self.updatable.add(bomb)
+            #self.drawable.add(bomb)
 
         
        
