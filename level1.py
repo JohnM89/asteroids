@@ -6,6 +6,7 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from pause import Pause
 from circleshape import CircleShape
+from walls import Walls
 from commonenemyspawns import * 
 from pickup import *
 from constants import *
@@ -22,40 +23,49 @@ class Level1(State):
         self.x = self.GAME_WIDTH / 2
         self.y = self.GAME_HEIGHT / 2
         self.hudd = {"score": 0, "lives": 99}
-        self.lives_ui = UserInterface(self.SCREEN_WIDTH - 86, self.SCREEN_HEIGHT - 64, self.SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", self.hudd, "lives", "Lives: ")
-        self.score_ui = UserInterface(128, 64, 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", self.hudd, "score", "Score: ")
+        self.lives_ui = UserInterface(self.SCREEN_WIDTH - 86, self.SCREEN_HEIGHT - 64, self.SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Lives: ","lives", self.hudd)
+        self.score_ui = UserInterface(128, 64, 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Score: ","score", self.hudd)
+        self.walls = Walls(GAME_WIDTH, GAME_HEIGHT, self.space)
         self.asteroids = pygame.sprite.Group()
         self.shots = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+        self.alien_count = ALIEN_MAX_COUNT
         self.ui = pygame.sprite.Group()
         self.asteroidfield = AsteroidField(self.asteroids, self.updatable, self.drawable, self.space)
-        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space, self.canvas)
+        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space, self.canvas, self.alien_count)
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
         self.hudd["lives"] = self.player.lives
         self.updatable.add(self.player, self.asteroidfield, self.commonenemyspawns, self.score_ui, self.lives_ui)
         self.drawable.add(self.player)
         self.player_asteroid_handler = self.space.add_collision_handler(1, 2)
         self.shot_asteroid_handler = self.space.add_collision_handler(2, 3)
-        self.shot_player_handler = self.space.add_collision_handler(1, 3)
         self.player_pickup_handler = self.space.add_collision_handler(1, 4)
 
+        self.player_enemy_handler = self.space.add_collision_handler(1, 5)
+        self.player_enemy_shot_handler = self.space.add_collision_handler(1, 6)
+        self.shot_enemy_handler = self.space.add_collision_handler(3, 5)
+
+        self.enemy_asteroid_handler = self.space.add_collision_handler(5, 2)
+
+
+
+        self.walls.draw_walls()
         self.player_asteroid_handler.begin = self.begin_p_a
         self.player_asteroid_handler.post_solve = self.post_solve_p_a
-        self.player_asteroid_handler.pre_solve = self.pre_solve_p_a
+        self.player_asteroid_handler.pred_solve = self.pre_solve_p_a
     
         self.shot_asteroid_handler.post_solve = self.post_solve_s_a
 
         self.player_pickup_handler.begin = self.begin_p_p
-        #self.shot_asteroid_handler.post_solve
-        #self.shot_asteroid_handler.pre_solve
+
+        self.player_enemy_handler
 
 
     #pymunk collision handling functions
-
+    
     ###
     def post_solve_s_a(self, arbiter, space, data):
         impact_force = arbiter.total_impulse.length
-        print(impact_force)
         impact_damage_threshold = 50.0
         objA, objB = arbiter.shapes
         #objA will always be 2 (asteroid) due to how its passed ot handler so you can omit this check 
@@ -83,7 +93,6 @@ class Level1(State):
         objA, objB = arbiter.shapes
         if hasattr(objB.game_object, "fuel"):
             self.player.fuel += objB.game_object.fuel
-            #objA.game_object.fuel += objB.game_object.fuel
             objB.game_object.kill()
             self.space.remove(objB.game_object.body, objB.game_object.shape)
         elif hasattr(objB.game_object, "bomb"):
@@ -125,13 +134,7 @@ class Level1(State):
         drawable.add(new_drop)
         space.add(new_drop.body, new_drop.shape)
 
-    def collision_check(self):
-        for obj in self.asteroids:
-            #find a way to make objects collide on occasion randomly
-            #if obj.collisions(obj in self.asteroids):
-                #if randint(1, 100) > 80:
-                
-            pass                    
+    def collision_check(self):                  
         #simple boundary wrapping for player need to put in player class
         if self.player.body.position.x > self.GAME_WIDTH:
             self.player.body.position = (0, self.player.body.position.y)

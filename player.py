@@ -21,12 +21,13 @@ class Player(CircleShape):
         self.flash_interval = FLASH_INTERVAL
         self.respawn_timer = PLAYER_RESPAWN_TIMER
         self.shape.collision_type = 1
-        self.shape.filter = pymunk.ShapeFilter(categories=0b00001)
+        self.shape.filter = pymunk.ShapeFilter(categories=PLAYER_CATEGORY, mask=PLAYER_MASK)
         self.space.add(self.body, self.shape)
         self.lives = 99
+        self.health = 1000
         self.fuel = 50.0    
         self.bombs = 0
-        self.game_object = self
+        self.shape.game_object = self
 
         #requirement for utilizing sprite groups, currently just set to transparent
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
@@ -61,9 +62,11 @@ class Player(CircleShape):
         forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
         if self.body.velocity.length < PLAYER_SPEED:
             acceleration = forward * ACCELERATION * dt
-            self.body.velocity *= DRAG_COEFFICENT
+            #self.body.velocity *= DRAG_COEFFICENT
             accel = pymunk.Vec2d(acceleration.x, acceleration.y)
             self.body.velocity += accel
+        else:
+            self.body.velocity *= DRAG_COEFFICENT
 
     #def bomb(self):
         #if self.player.bombs > 0:

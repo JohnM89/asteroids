@@ -5,13 +5,13 @@ class Pause(State):
     def __init__(self, game): 
         super().__init__(game)
         self.hudd = {"State": "Paused"}
-        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", self.hudd, "State", "Paused")
+        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Paused")
         self.updatable.add(self.menu_box)
         self.drawable.add(self.menu_box)
 
     def update(self, dt):
         super().update(dt)
-        self.menu_box.get_hudd(self.hudd)
+        #self.menu_box.get_hudd(self.hudd)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.exit_state()

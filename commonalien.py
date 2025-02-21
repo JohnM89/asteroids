@@ -15,7 +15,7 @@ class CommonAlien(CircleShape):
         self.rect.center = (int(self.body.position.x), int(self.body.position.y))
         pygame.draw.circle(self.image, (self.enemy_colour), (self.radius, self.radius), self.radius, width=2)
         self.space = space
-        self.shape.filter = pymunk.ShapeFilter(group=1)
+        self.shape.filter = pymunk.ShapeFilter(categories=ENEMY_CATEGORY, mask=ENEMY_MASK)
 
         #self.shape.friction = 9.0
         #self.shape.elasticity = 0.2

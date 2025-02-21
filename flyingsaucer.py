@@ -1,15 +1,16 @@
 from commonalien import *
-from shot import Shot
+from enemy_shot import EnemyShot
 import math
 import pygame   
 import pymunk.pygame_util
 from raycast import RayCast
 class FlyingSaucer(CommonAlien):
-    def __init__(self, x, y, radius, updatable, drawable, space, canvas, colour=(0,0,0)):
+    def __init__(self, x, y, radius, updatable, drawable, space, canvas, alien_count, colour=(0,0,0)):
         super().__init__(x , y, radius, space, colour)
         ##debug     
         self.canvas = canvas
         ## 
+        self.alien_count = alien_count
         self.rotation = 0
         self.updatable = updatable
         self.drawable = drawable    
@@ -24,11 +25,14 @@ class FlyingSaucer(CommonAlien):
 
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
-        if result != None:
-            x , y = result
-            if x != 0 or y != 0:
-                self.rotate(x, y)
-                self.shoot(x, y)
+        if hasattr(result, "point"):
+            if result.point != None:
+                if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
+                    if result.shape.game_object.__class__.__name__ == "Player":
+                        x , y = result.point
+                        if x != 0 or y != 0:
+                            self.rotate(x, y)
+                            self.shoot(x, y)
         #pass
     def rotate(self, x, y):
         direction = (pymunk.Vec2d(x , y) - self.body.position).angle
@@ -36,12 +40,12 @@ class FlyingSaucer(CommonAlien):
     def shoot(self, x, y):
         if self.timer <= 0:
             print(f"shooting{x}{y}")
-            shot = Shot(self.body.position.x, self.body.position.y, self.space)
+            shot = EnemyShot(self.body.position.x, self.body.position.y, self.space)
             self.updatable.add(shot)
             self.drawable.add(shot)
             shot.body.velocity = pymunk.Vec2d(1,0).rotated(self.body.angle) * 300
             self.space.add(shot.body, shot.shape)
-            self.timer = PLAYER_SHOOT_COOLDOWN
+            self.timer = PLAYER_SHOOT_COOLDOWN * 2
     def shoot_timer(self, dt):
         if self.timer > 0:
             self.timer -= dt    

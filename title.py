@@ -8,13 +8,13 @@ class Title(State):
     def __init__(self, game):
         super().__init__(game)
         self.hudd = {"Start":"Game"}       
-        self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", self.hudd, "Start", "Title Screen")
+        self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Title Screen")
         self.updatable.add(self.title_box)
         self.drawable.add(self.title_box)
     
     def update(self, dt):
         super().update(dt)
-        self.title_box.get_hudd(self.hudd)
+        #self.title_box.get_hudd(self.hudd)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             new_state = StartMenu(self.game)

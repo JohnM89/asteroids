@@ -18,7 +18,7 @@ class Asteroid(CircleShape):
         self.shape.elasticity = 0.2
         self.shape.collision_type = 2
         self.shape.mass = 100 * self.radius
-        self.shape.filter = pymunk.ShapeFilter(categories=0b00010)
+        self.shape.filter = pymunk.ShapeFilter(categories=ASTEROID_CATEGORY, mask=ASTEROID_MASK)
         self.shape.game_object = self
         self.time_to_live = ASTEROID_TTL
         self.damage_accumulated = 0
