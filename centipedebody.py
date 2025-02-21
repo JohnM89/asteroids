@@ -7,7 +7,7 @@ class CentipedeBody(CommonAlien):
         self.shape.elasticity = 0.2
         self.shape.collision_type = 5
         #self.shape.filter = pymunk.ShapeFilter()
-        self.shape.mass = 40 * self.radius
+        self.shape.mass = 5 * self.radius
     
     def draw(self):
         pass

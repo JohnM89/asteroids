@@ -29,55 +29,91 @@ class Level1(State):
         self.asteroids = pygame.sprite.Group()
         self.shots = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-        self.alien_count = ALIEN_MAX_COUNT
         self.ui = pygame.sprite.Group()
+        self.current_alien_count = 0
         self.asteroidfield = AsteroidField(self.asteroids, self.updatable, self.drawable, self.space)
-        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space, self.canvas, self.alien_count)
+        self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space, self.canvas, self.current_alien_count)
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
         self.hudd["lives"] = self.player.lives
         self.updatable.add(self.player, self.asteroidfield, self.commonenemyspawns, self.score_ui, self.lives_ui)
         self.drawable.add(self.player)
+
         self.player_asteroid_handler = self.space.add_collision_handler(1, 2)
         self.shot_asteroid_handler = self.space.add_collision_handler(2, 3)
         self.player_pickup_handler = self.space.add_collision_handler(1, 4)
-
+        ####
         self.player_enemy_handler = self.space.add_collision_handler(1, 5)
+        #!
         self.player_enemy_shot_handler = self.space.add_collision_handler(1, 6)
+        
+        self.enemy_shot_asteroid_handler = self.space.add_collision_handler(6, 2)
+        #!
         self.shot_enemy_handler = self.space.add_collision_handler(3, 5)
-
+        #!
+        ###
         self.enemy_asteroid_handler = self.space.add_collision_handler(5, 2)
-
+        #!
+        ##
 
 
         self.walls.draw_walls()
-        self.player_asteroid_handler.begin = self.begin_p_a
+        #self.player_asteroid_handler.begin = self.begin_p_a
         self.player_asteroid_handler.post_solve = self.post_solve_p_a
-        self.player_asteroid_handler.pred_solve = self.pre_solve_p_a
+        #self.player_asteroid_handler.pred_solve = self.pre_solve_p_a
     
         self.shot_asteroid_handler.post_solve = self.post_solve_s_a
+        self.player_enemy_shot_handler.post_solve = self.post_solve_p_e_s
+
+        self.enemy_shot_asteroid_handler.post_solve = self.post_solve_e_s_a
+        self.shot_enemy_handler.post_solve = self.post_solve_s_e
 
         self.player_pickup_handler.begin = self.begin_p_p
 
-        self.player_enemy_handler
+        self.player_enemy_handler.post_solve = self.post_solve_p_e
+        self.enemy_asteroid_handler.post_solve = self.post_solve_e_a
 
 
-    #pymunk collision handling functions
-    
-    ###
-    def post_solve_s_a(self, arbiter, space, data):
+    def post_solve_p_e_s(self, arbiter, space, data):
         impact_force = arbiter.total_impulse.length
         impact_damage_threshold = 50.0
         objA, objB = arbiter.shapes
-        #objA will always be 2 (asteroid) due to how its passed ot handler so you can omit this check 
-        if objB.collision_type == 3:
-            shot_obj = objB.game_object
-            ast_obj = objA.game_object
-        elif objA.collision_type == 3:
-            shot_obj = objA.game_object
-            ast_obj = objB.game_object
-        if arbiter.is_first_contact == True:            
+        e_shot = objB.game_object
+        player = objA.game_object
+        if arbiter.is_first_contact == True:
+            player.health -= impact_force
+            print(player.health)
+        return True
+
+    def post_solve_s_e(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length
+        impact_damage_threshold = 10.0
+        objA, objB = arbiter.shapes
+        if objA.game_object.shape.collision_type == 3:
+            enemy = objB.game_object
+            shot = objA.game_object
+        else:
+            enemy = objA.game_object
+            shot = objB.game_object
+        print(enemy.damage_accumulated)
+        enemy.damage_accumulated += impact_force
+        self.hudd["score"] += 1
+        if enemy.damage_accumulated >= enemy.split_threshold:
+            enemy.kill()
+            self.current_alien_count -= 1
+            contact = arbiter.contact_point_set.points[0]
+            contact_point = contact.point_a
+            self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+            self.space.remove(enemy.body, enemy.shape)
+        return True
+
+    def post_solve_e_s_a(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length
+        impact_damage_threshold = 50.0
+        objA, objB = arbiter.shapes
+        shot_obj = objB.game_object
+        ast_obj = objA.game_object
+        if arbiter.is_first_contact == True:
             ast_obj.damage_accumulated += impact_force
-            self.hudd["score"] += 1
             if ast_obj.damage_accumulated >= ast_obj.split_threshold:
                 shot_obj.kill()
                 contact = arbiter.contact_point_set.points[0]
@@ -88,6 +124,74 @@ class Level1(State):
                 ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point )
                 self.space.remove(shot_obj.body, shot_obj.shape)
         return True
+
+    def post_solve_e_a(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length 
+        impact_damage_threshold = 60.0
+        objA, objB = arbiter.shapes
+        if objA.game_object.shape.collision_type == 5:
+            enemy = objA.game_object
+            asteroid = objB.game_object
+        else:
+            enemy = objB.game_object
+            asteroid = objA.game_object
+        #if arbiter.is_first_contact == True:
+        enemy.damage_accumulated -= impact_force
+        asteroid.damage_accumulated += impact_force
+        if asteroid.damage_accumulated >= asteroid.split_threshold:
+            contact = arbiter.contact_point_set.points[0]
+            contact_point = contact.point_a
+            self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+            normal = arbiter.normal
+            asteroid.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impact_force, contact_point)
+        if enemy.damage_accumulated >= enemy.split_threshold:
+            enemy.kill()
+            self.current_alien_count -= 1
+            contact = arbiter.contact_point_set[0]
+            contact_point = contact.point_a 
+            self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+        return True
+
+    def post_solve_p_e(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length
+        print(impact_force)
+        impact_damage_threshold = 40.0
+        objA, objB = arbiter.shapes
+        if objA.game_object.shape.collision_type == 1:
+            player = objA.game_object
+        else:
+            player = objB.game_object
+        if arbiter.is_first_contact == True:
+            player.health -= impact_force
+            print(player.health)
+        return True
+
+    #pymunk collision handling functions
+    
+    ###
+    def post_solve_s_a(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length
+        impact_damage_threshold = 50.0
+        objA, objB = arbiter.shapes
+        #objA will always be 2 (asteroid) due to how its passed ot handler so you can omit this check 
+        shot_obj = objB.game_object
+        ast_obj = objA.game_object
+        if arbiter.is_first_contact == True:            
+            ast_obj.damage_accumulated += impact_force
+            self.hudd["score"] += 1
+            #make this a standalone funciton 
+            if ast_obj.damage_accumulated >= ast_obj.split_threshold:
+                shot_obj.kill()
+                contact = arbiter.contact_point_set.points[0]
+                contact_point = contact.point_a
+                self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+                normal = arbiter.normal
+                impulse = arbiter.total_impulse.length
+                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point )
+                self.space.remove(shot_obj.body, shot_obj.shape)
+        return True
+
+
 
     def begin_p_p(self, arbiter, space, data):
         objA, objB = arbiter.shapes
@@ -101,14 +205,22 @@ class Level1(State):
             self.space.remove(objB.game_object.body, objB.game_object.shape)
         return False
     #player - asteroid handler  
-    def begin_p_a(self, arbiter, space, data):
+    def post_solve_p_a(self, arbiter, space, data):
         objA, objB = arbiter.shapes
+        impact = arbiter.total_impulse.length
+        impact_damage_threshold = 30.0
+        if objA.game_object.shape.collision_type == 1:
+            player = objA.game_object
+            asteroid = objB.game_object
         if arbiter.is_first_contact == True:
-            if self.player.lives > 0:
-                if self.player.respawn_timer <= 0:
-                    self.player.lives -= 1  
-                    self.player.respawn_timer = PLAYER_RESPAWN_TIMER
-                    self.hudd["lives"] = self.player.lives
+            print(impact)
+            print(player.health)
+            if impact >= impact_damage_threshold:
+                if player.lives > 0:
+                    if player.respawn_timer <= 0:
+                        player.health -= impact  
+                        player.respawn_timer = PLAYER_RESPAWN_TIMER
+                        self.hudd["lives"] = player.lives
             #else:
                 #self.exit_state()
         return True 
@@ -118,12 +230,12 @@ class Level1(State):
         #    return False
         return True
         #pass
-    def post_solve_p_a(self, arbiter, space, data):
+    #def post_solve_p_a(self, arbiter, space, data):
         #retreive collision impulse or kenetic energy to calculate sound volume and damage amount   
         #impulse = arbiter.total_impulse
         #kenetic_loss = arbiter.total_ke
         #print(impulse)
-        pass
+        #pass
     def separate(arbiter, space, data):
         pass
     ###

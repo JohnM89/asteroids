@@ -35,7 +35,7 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         ],
     ]
 
-    def __init__(self, aliens, updatable, drawable, space, canvas, alien_count):
+    def __init__(self, aliens, updatable, drawable, space, canvas, current_alien_count):
         
         pygame.sprite.Sprite.__init__(self)
         #for debug
@@ -47,13 +47,13 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         self.drawable = drawable
         self.space = space
         self.spawn_timer = 0.0
-        self.alien_count = alien_count
-        self.current_alien_count = 0
+        self.alien_count = ALIEN_MAX_COUNT
+        self.current_alien_count = current_alien_count
 
     def spawn(self, radius, position, velocity):
-        types = [FlyingSaucer(position.x, position.y, radius, self.updatable, self.drawable, self.space, self.canvas, self.alien_count), Scourge(position.x, position.y, radius, self.space, self.canvas, self.alien_count)]
-        #alien = random.choice(types)
-        alien = types[1]
+        types = [FlyingSaucer(position.x, position.y, radius, self.updatable, self.drawable, self.space, self.canvas, self.current_alien_count), Scourge(position.x, position.y, radius, self.space, self.canvas, self.current_alien_count)]
+        alien = random.choice(types)
+        #alien = types[1]
         alien.body.velocity = velocity
         self.aliens.add(alien)
         self.updatable.add(alien)
@@ -65,7 +65,7 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         length = body_count
         for i in range(length):
             if i == 0:
-                segment = CentipedeHead(position.x + (1 * 2 * radius), position.y, radius, self.space, self.canvas, self.alien_count)
+                segment = CentipedeHead(position.x + (1 * 2 * radius), position.y, radius, self.space, self.canvas, self.current_alien_count)
             else:
                 segment = CentipedeBody(position.x + ((i + 1)*2*radius), position.y, radius, self.space)
             segments.append(segment)

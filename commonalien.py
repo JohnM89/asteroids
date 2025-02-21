@@ -19,6 +19,7 @@ class CommonAlien(CircleShape):
 
         #self.shape.friction = 9.0
         #self.shape.elasticity = 0.2
+        #self.health = 1000
         self.shape.collision_type = 5
         self.shape.mass = 100 * self.radius
         self.shape.game_object = self
@@ -33,8 +34,10 @@ class CommonAlien(CircleShape):
         if self.body.position.x > GAME_WIDTH or self.body.position.x < 0 or self.body.position.y > GAME_HEIGHT or self.body.position.y < 0:
             return True
     def update(self, dt):
+        if hasattr(self, "body"):
+            self.rect.center = (int(self.body.position.x), int(self.body.position.y))
         self.time_to_live -= dt 
         if self.time_to_live <= dt and self.bounds_check() == True:
             self.kill()
             self.space.remove(self.body, self.shape)
-        self.rect.center = (int(self.body.position.x), int(self.body.position.y))
+        #self.rect.center = (int(self.body.position.x), int(self.body.position.y))

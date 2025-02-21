@@ -73,6 +73,10 @@ class Player(CircleShape):
             #bomb = Bomb(position.x, position.y, space)
             #self.updatable.add(bomb)
             #self.drawable.add(bomb)
+    def health_check(self):
+        if self.health <= 0:
+            self.lives -= 1
+            self.health = 1000
 
         
        
@@ -113,6 +117,7 @@ class Player(CircleShape):
             self.current_colour = self.player_colour
 
     def update(self, dt):
+        self.health_check()
         self.respawn_timer_fn(dt)
         self.shoot_timer(dt)
         self.rect.center = (int(self.body.position.x), int(self.body.position.y))

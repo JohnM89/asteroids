@@ -11,7 +11,7 @@ class CentipedeHead(CommonAlien):
         self.canvas = canvas
         self.shape.friction = 7.0
         self.shape.elasticity = 0.2
-        self.shape.collision_type = 5
+        #self.shape.collision_type = 5
         self.shape.mass = 40 * self.radius
         self.max_view_distance = 300
         self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
