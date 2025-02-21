@@ -5,17 +5,18 @@ from raycast import RayCast
 from commonalien import *
 from centipedebody import *
 class CentipedeHead(CommonAlien):
-    def __init__(self, x, y, radius, space, canvas, alien_count, colour=(0,0,0)):
+    def __init__(self, x, y, radius, space, canvas, colour=(0,0,0)):
         super().__init__(x , y, radius, space, colour)
         self.radius = self.radius
         self.canvas = canvas
         self.shape.friction = 7.0
-        self.shape.elasticity = 0.2
+        self.shape.elasticity = 0.2 
+        self.joints = []
+        self.rotation_limit_list = []
         #self.shape.collision_type = 5
         self.shape.mass = 40 * self.radius
         self.max_view_distance = 300
         self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
-        self.alien_count = alien_count
         #self.shape.filter = pymunk.ShapeFilter(group=2)
         
     def draw(self):

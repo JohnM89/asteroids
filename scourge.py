@@ -5,7 +5,7 @@ import math
 import pygame   
 from raycast import RayCast
 class Scourge(CommonAlien):
-    def __init__(self, x, y, radius, space, canvas, alien_count, colour=(255,255,0)):
+    def __init__(self, x, y, radius, space, canvas, colour=(255,255,0)):
         super().__init__(x , y, radius, space, colour)
         self.canvas = canvas
         self.shape.friction = 9.0
@@ -14,7 +14,6 @@ class Scourge(CommonAlien):
         self.max_view_distance = 100
         self.shape.mass = 30 * self.radius
         self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
-        self.alien_count = alien_count
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
         if hasattr(result, "point"):    

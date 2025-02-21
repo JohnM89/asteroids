@@ -31,7 +31,9 @@ class Level1(State):
         self.aliens = pygame.sprite.Group()
         self.ui = pygame.sprite.Group()
         self.current_alien_count = 0
-        self.asteroidfield = AsteroidField(self.asteroids, self.updatable, self.drawable, self.space)
+        self.current_asteroid_count = 0
+        self.level = self
+        self.asteroidfield = AsteroidField(self, self.asteroids, self.updatable, self.drawable, self.space)
         self.commonenemyspawns = CommonEnemySpawns(self.aliens, self.updatable, self.drawable, self.space, self.canvas, self.current_alien_count)
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
         self.hudd["lives"] = self.player.lives
@@ -55,11 +57,9 @@ class Level1(State):
         #!
         ##
 
-
+        #need a collision handler manager
         self.walls.draw_walls()
-        #self.player_asteroid_handler.begin = self.begin_p_a
         self.player_asteroid_handler.post_solve = self.post_solve_p_a
-        #self.player_asteroid_handler.pred_solve = self.pre_solve_p_a
     
         self.shot_asteroid_handler.post_solve = self.post_solve_s_a
         self.player_enemy_shot_handler.post_solve = self.post_solve_p_e_s
@@ -81,7 +81,6 @@ class Level1(State):
         player = objA.game_object
         if arbiter.is_first_contact == True:
             player.health -= impact_force
-            print(player.health)
         return True
 
     def post_solve_s_e(self, arbiter, space, data):
@@ -98,10 +97,18 @@ class Level1(State):
         enemy.damage_accumulated += impact_force
         self.hudd["score"] += 1
         if enemy.damage_accumulated >= enemy.split_threshold:
-            enemy.kill()
-            self.current_alien_count -= 1
+            if hasattr(enemy, "joints") and hasattr(enemy, "rotation_limit_list"):
+                for joint in enemy.joints:
+                    if joint in self.space.constraints:
+                        self.space.remove(joint)
+                for rotation in enemy.rotation_limit_list:
+                    if rotation in self.space.constraints:
+                        self.space.remove(rotation)
+            self.commonenemyspawns.current_alien_count -= 1
+            print(self.commonenemyspawns.current_alien_count)
             contact = arbiter.contact_point_set.points[0]
             contact_point = contact.point_a
+            enemy.kill()
             self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
             self.space.remove(enemy.body, enemy.shape)
         return True
@@ -110,8 +117,12 @@ class Level1(State):
         impact_force = arbiter.total_impulse.length
         impact_damage_threshold = 50.0
         objA, objB = arbiter.shapes
-        shot_obj = objB.game_object
-        ast_obj = objA.game_object
+        if objA.game_object.collision_type == 6:
+            shot_obj = objA.game_object
+            ast_obj = objB.game_object
+        else:
+            ast_obj = objA.game_object
+            shot_obj = objB.game_object
         if arbiter.is_first_contact == True:
             ast_obj.damage_accumulated += impact_force
             if ast_obj.damage_accumulated >= ast_obj.split_threshold:
@@ -121,7 +132,7 @@ class Level1(State):
                 self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
                 normal = arbiter.normal
                 impulse = arbiter.total_impulse.length
-                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point )
+                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point)
                 self.space.remove(shot_obj.body, shot_obj.shape)
         return True
 
@@ -136,7 +147,7 @@ class Level1(State):
             enemy = objB.game_object
             asteroid = objA.game_object
         #if arbiter.is_first_contact == True:
-        enemy.damage_accumulated -= impact_force
+        enemy.damage_accumulated += impact_force
         asteroid.damage_accumulated += impact_force
         if asteroid.damage_accumulated >= asteroid.split_threshold:
             contact = arbiter.contact_point_set.points[0]
@@ -145,10 +156,19 @@ class Level1(State):
             normal = arbiter.normal
             asteroid.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impact_force, contact_point)
         if enemy.damage_accumulated >= enemy.split_threshold:
+            if hasattr(enemy, "joints") and hasattr(enemy, "rotation_limit_list"):
+                for joint in enemy.joints:
+                    if joint in self.space.constraints:
+                        self.space.remove(joint)
+                for rotation in enemy.rotation_limit_list:
+                    if rotation in self.space.constraints:
+                        self.space.remove(rotation)
+            self.commonenemyspawns.current_alien_count -= 1
+            print(self.commonenemyspawns.current_alien_count)
+            contact = arbiter.contact_point_set.points[0]
+            contact_point = contact.point_a
             enemy.kill()
-            self.current_alien_count -= 1
-            contact = arbiter.contact_point_set[0]
-            contact_point = contact.point_a 
+            self.space.remove(enemy.body, enemy.shape)
             self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
         return True
 
@@ -187,7 +207,8 @@ class Level1(State):
                 self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
                 normal = arbiter.normal
                 impulse = arbiter.total_impulse.length
-                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point )
+                print(self.current_asteroid_count)
+                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point)
                 self.space.remove(shot_obj.body, shot_obj.shape)
         return True
 
@@ -258,7 +279,7 @@ class Level1(State):
             self.player.body.position = (self.player.body.position.x,self.GAME_HEIGHT)
     
     def end_game(self):
-        if self.player.lives <= 0 or self.player.fuel <= 0:
+        if self.player.lives <= 0:
             self.exit_state()
 
     def update(self, dt):

@@ -38,6 +38,12 @@ class CommonAlien(CircleShape):
             self.rect.center = (int(self.body.position.x), int(self.body.position.y))
         self.time_to_live -= dt 
         if self.time_to_live <= dt and self.bounds_check() == True:
+            if hasattr(self, "joints"):
+                for joint in joints:
+                    self.space.remove(joint.body, joint.shape)
+            if hasattr(self, "rotation_limit_list"):
+                for rotation in rotation_limit_list:
+                    self.space.remove(rotation.body, rotation.shape)
             self.kill()
             self.space.remove(self.body, self.shape)
         #self.rect.center = (int(self.body.position.x), int(self.body.position.y))

@@ -1,6 +1,7 @@
 import pygame
 import random
 import pymunk
+import weakref
 from asteroid import Asteroid
 from constants import *
 
@@ -43,11 +44,11 @@ class AsteroidField(pygame.sprite.Sprite):
         ],
     ]
 
-    def __init__(self, asteroids, updatable, drawable, space):
+    def __init__(self, level, asteroids, updatable, drawable, space):
         #pygame.sprite.Sprite.__init__(self, self.containers)
         pygame.sprite.Sprite.__init__(self)
         #initalize timer at 0
-        #self.asteroid_count = 0
+        self.level = weakref.proxy(level)
         self.asteroids = asteroids
         self.updatable = updatable
         self.drawable = drawable
@@ -55,7 +56,7 @@ class AsteroidField(pygame.sprite.Sprite):
         self.spawn_timer = 0.0
 
     def spawn(self, radius, position, velocity, space):
-        asteroid = Asteroid(position.x, position.y, radius, space)
+        asteroid = Asteroid(position.x, position.y, radius, space, self.level)
         #update asteroid with given velocity
         #asteroid.velocity = velocity
         asteroid.body.velocity = velocity
@@ -67,9 +68,10 @@ class AsteroidField(pygame.sprite.Sprite):
     def update(self, dt):
         self.spawn_timer += dt
         #if spawn_timer overtakes spawn rate reset spawn_timer and spawn new asteroid
-        if self.spawn_timer > ASTEROID_SPAWN_RATE:
+        if self.spawn_timer > ASTEROID_SPAWN_RATE and self.level.current_asteroid_count <= MAX_ASTEROIDS:
             self.spawn_timer = 0
-            #self.asteroid_count += 1
+            self.level.current_asteroid_count += 1
+            print(self.level.current_asteroid_count)
             #spawn a new asteroid at random edge
             edge = random.choice(self.edges)
             #determine a random speed in range

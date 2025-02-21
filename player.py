@@ -59,14 +59,19 @@ class Player(CircleShape):
         #self.rect.rotate(self.rotation)
     #update position based on vector , speed and delta time
     def move(self, dt):
-        forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
-        if self.body.velocity.length < PLAYER_SPEED:
-            acceleration = forward * ACCELERATION * dt
-            #self.body.velocity *= DRAG_COEFFICENT
-            accel = pymunk.Vec2d(acceleration.x, acceleration.y)
-            self.body.velocity += accel
-        else:
-            self.body.velocity *= DRAG_COEFFICENT
+        if self.fuel > 0:
+            forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
+            if self.body.velocity.length < PLAYER_SPEED:
+                acceleration = forward * ACCELERATION * dt
+                #self.body.velocity *= DRAG_COEFFICENT
+                accel = pymunk.Vec2d(acceleration.x, acceleration.y)
+                self.body.velocity += accel
+            else:
+                self.body.velocity *= DRAG_COEFFICENT
+            self.fuel -= 0.0001
+            #print(self.fuel)
+        #else:
+            #pass
 
     #def bomb(self):
         #if self.player.bombs > 0:
@@ -78,7 +83,8 @@ class Player(CircleShape):
             self.lives -= 1
             self.health = 1000
 
-        
+    #def check_fuel(self):
+        #if self.fuel <= 0:
        
 
 

@@ -5,7 +5,7 @@ from circleshape import *
 from constants import *
 #created in AsteroidField class
 class Asteroid(CircleShape):
-    def __init__(self, x, y, radius, space):
+    def __init__(self, x, y, radius, space, level):
         super().__init__(x , y, radius)
         
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
@@ -23,6 +23,7 @@ class Asteroid(CircleShape):
         self.time_to_live = ASTEROID_TTL
         self.damage_accumulated = 0
         self.split_threshold = 10 * self.radius
+        self.level = level
     
     #draw as circle with white colouring
     def draw(self):
@@ -32,6 +33,8 @@ class Asteroid(CircleShape):
         self.kill()
         original_velocity = self.body.velocity
         space.remove(self.body, self.shape)
+        self.level.current_asteroid_count -= 1
+        print(self.level.current_asteroid_count)
         if self.body in space.bodies:
             space.remove(self.body, self.shape)
         #if radius is less than or equal to the min radius do nothing
@@ -56,9 +59,11 @@ class Asteroid(CircleShape):
             #new radius is old radius minus the value of min radius
             radius = self.radius - ASTEROID_MIN_RADIUS
             #create 2 new asteroids, add velocity and accelerate by 1.2 
-            asteroid1 = Asteroid(spawn_point.x, spawn_point.y, radius, space)
+            self.level.current_asteroid_count += 1
+            asteroid1 = Asteroid(spawn_point.x, spawn_point.y, radius, space, self.level)
             asteroid1.body.velocity = original_velocity + extra_velocity1
-            asteroid2 = Asteroid(spawn_point.x, spawn_point.y, radius, space)
+            self.level.current_asteroid_count += 1
+            asteroid2 = Asteroid(spawn_point.x, spawn_point.y, radius, space, self.level)
             asteroid2.body.velocity = original_velocity + extra_velocity2
             updatable.add(asteroid1, asteroid2)
             drawable.add(asteroid1, asteroid2)
@@ -73,5 +78,6 @@ class Asteroid(CircleShape):
         self.time_to_live -= dt 
         if self.time_to_live <= dt and self.bounds_check() == True:
             self.kill()
+            self.level.current_asteroid_count -= 1
             self.space.remove(self.body, self.shape)
         self.rect.center = (int(self.body.position.x), int(self.body.position.y))

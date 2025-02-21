@@ -5,12 +5,12 @@ import pygame
 import pymunk.pygame_util
 from raycast import RayCast
 class FlyingSaucer(CommonAlien):
-    def __init__(self, x, y, radius, updatable, drawable, space, canvas, alien_count, colour=(0,0,0)):
+    def __init__(self, x, y, radius, updatable, drawable, space, canvas, colour=(0,0,0)):
+
         super().__init__(x , y, radius, space, colour)
         ##debug     
         self.canvas = canvas
         ## 
-        self.alien_count = alien_count
         self.rotation = 0
         self.updatable = updatable
         self.drawable = drawable    
