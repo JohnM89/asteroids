@@ -27,17 +27,38 @@ class CentipedeHead(CommonAlien):
                     if result.shape.game_object.__class__.__name__ == "FuelDrop":
                         x , y = result.point
                         if x != 0 or y != 0:
-                            self.rotate(x, y)
-                            self.move()       
-    def rotate(self,x, y):
-        direction = (pymunk.Vec2d(x, y) - self.body.position).angle
-        self.body.angle = direction
-    def move(self):
+                            towards = True  
+                            self.rotate(x, y, towards)
+                            boost = True
+                            self.move(boost)
+                        else:
+                            x , y = result.point
+                            if x != 0 or y != 0:
+                                self.rotate(x, y)
+                                self.move()
+    def rotate(self,x, y, towards=False):
+        if towards == True:
+            direction = (pymunk.Vec2d(x, y) - self.body.position).angle
+            self.body.angle = direction
+        else:
+            direction = (pymunk.Vec2d(x, y) - self.body.position).angle
+            self.body.angle = (direction + math.pi)
+
+    def move(self, boost=False):
         forward = pymunk.Vec2d(1, 0).rotated(self.body.angle)
-        if self.body.velocity.length < PLAYER_SPEED:
-            acceleration = forward * ACCELERATION
-            accel = pymunk.Vec2d(acceleration.x, acceleration.y)
-            self.body.velocity += accel
+        if boost == True:
+            if self.body.velocity.length < PLAYER_SPEED:
+                acceleration = forward * ACCELERATION
+                accel = pymunk.Vec2d(acceleration.x, acceleration.y)
+                self.body.velocity += accel
+        else:
+            if self.body.velocity.length < PLAYER_SPEED:
+                acceleration = forward * (ACCELERATION * 0.002)
+                accel = pymunk.Vec2d(acceleration.x, acceleration.y)
+                self.body.velocity += accel
+            else:
+                self.body.velocity *= DRAG_COEFFICENT
+
     def bounds_check(self):
         super().bounds_check()
     def update(self, dt):

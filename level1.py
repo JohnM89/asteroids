@@ -117,7 +117,7 @@ class Level1(State):
         impact_force = arbiter.total_impulse.length
         impact_damage_threshold = 50.0
         objA, objB = arbiter.shapes
-        if objA.game_object.collision_type == 6:
+        if objA.game_object.shape.collision_type == 6:
             shot_obj = objA.game_object
             ast_obj = objB.game_object
         else:
@@ -138,7 +138,7 @@ class Level1(State):
 
     def post_solve_e_a(self, arbiter, space, data):
         impact_force = arbiter.total_impulse.length 
-        impact_damage_threshold = 60.0
+        impact_damage_threshold = 80.0
         objA, objB = arbiter.shapes
         if objA.game_object.shape.collision_type == 5:
             enemy = objA.game_object
