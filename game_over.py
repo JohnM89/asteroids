@@ -1,11 +1,14 @@
 import pygame
+import json
+import os   
 from state import State 
 from userinterface import UserInterface 
-class Pause(State):
-    def __init__(self, game): 
+class GameOver(State):
+    def __init__(self, game, score): 
         super().__init__(game)
-        self.hudd = {"State": "Paused"}
-        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Paused")
+        self.score = score
+        self.hudd = {"State": "Game Over"}
+        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Game Over!")
         self.updatable.add(self.menu_box)
         self.drawable.add(self.menu_box)
 
@@ -16,6 +19,7 @@ class Pause(State):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    self.exit_state()
                     self.exit_state()
                 if event.key == pygame.K_q:
                     self.exit_state()

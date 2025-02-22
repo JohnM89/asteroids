@@ -19,6 +19,7 @@ class Walls:
         for line in static_lines:
             line.elasticity = 0.7
             line.filter = pymunk.ShapeFilter(categories=WALL_CATEGORY, mask=WALL_MASK)
+            line.game_object = self
             self.space.add(line)
 
     def remove_walls(self):

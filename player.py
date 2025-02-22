@@ -23,8 +23,8 @@ class Player(CircleShape):
         self.shape.collision_type = 1
         self.shape.filter = pymunk.ShapeFilter(categories=PLAYER_CATEGORY, mask=PLAYER_MASK)
         self.space.add(self.body, self.shape)
-        self.lives = 99
-        self.health = 1000
+        self.lives = 1
+        self.health = 100
         self.fuel = 50.0    
         self.bombs = 0
         self.shape.game_object = self
@@ -63,7 +63,6 @@ class Player(CircleShape):
             forward = pymunk.Vec2d(0, 1).rotated(self.rotation)
             if self.body.velocity.length < PLAYER_SPEED:
                 acceleration = forward * ACCELERATION * dt
-                #self.body.velocity *= DRAG_COEFFICENT
                 accel = pymunk.Vec2d(acceleration.x, acceleration.y)
                 self.body.velocity += accel
             else:

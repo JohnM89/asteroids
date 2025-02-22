@@ -35,20 +35,22 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         ],
     ]
 
-    def __init__(self, aliens, updatable, drawable, space, canvas, current_alien_count):
+    def __init__(self, level):
         
         pygame.sprite.Sprite.__init__(self)
         #for debug
+        self.level = level
         ##
-        self.canvas = canvas
+        self.canvas = level.canvas
         ##
-        self.aliens = aliens
-        self.updatable = updatable
-        self.drawable = drawable
-        self.space = space
+        self.aliens = level.aliens
+        self.updatable = level.updatable
+        self.drawable = level.drawable
+        self.space = level.space
         self.spawn_timer = 0.0
-        self.alien_count = ALIEN_MAX_COUNT
-        self.current_alien_count = current_alien_count
+        self.alien_max_count = level.alien_max_count
+        self.alien_spawn_rate = level.alien_spawn_rate
+        self.current_alien_count = level.current_alien_count
 
     def spawn(self, radius, position, velocity):
         types = [FlyingSaucer(position.x, position.y, radius, self.updatable, self.drawable, self.space, self.canvas), Scourge(position.x, position.y, radius, self.space, self.canvas)]
@@ -93,7 +95,7 @@ class CommonEnemySpawns(pygame.sprite.Sprite):
         segments[0].body.velocity = velocity
     def update(self, dt):
         self.spawn_timer += dt
-        if self.spawn_timer > ALIEN_SPAWN_RATE and self.current_alien_count < self.alien_count:
+        if self.spawn_timer > self.alien_spawn_rate and self.current_alien_count < self.alien_max_count:
             self.spawn_timer = 0
             self.current_alien_count += 1
             print(self.current_alien_count)

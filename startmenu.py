@@ -17,36 +17,46 @@ class StartMenu(State):
         self.hover = pygame.sprite.Group()
         self.buttons = pygame.sprite.Group()
         self.buttons.add(self.start_game, self.preferences, self.highscore, self.quit_game)
+        self.button_list = list(self.buttons)
         self.updatable.add( self.start_game, self.preferences, self.highscore, self.quit_game)
         self.drawable.add(self.start_game, self.preferences, self.highscore, self.quit_game)
+        self.current_index = 0
+        self.current_button = None
         
     def update(self, dt):
         super().update(dt)
-        #self.title_box.get_hudd(self.hudd)
-        mouse_pos = pygame.mouse.get_pos()
         self.hover.empty()
         for button in self.buttons:
-            if button.rect.collidepoint(mouse_pos):
+            if button == self.current_button:
                 self.hover.add(button)
                 self.drawable.remove(button)
             else:
                 self.drawable.add(button)
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            new_state = Level1(self.game)
-            new_state.enter_state()
-
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    self.current_index += 1
+                    self.current_button = self.button_list[(self.current_index) % len(self.button_list) - 1]
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    self.current_index -= 1
+                    self.current_button = self.button_list[(self.current_index) % len(self.button_list) - 1]
+                if event.key == pygame.K_RETURN:
+                    if self.current_button == self.start_game:
+                        new_state = Level1(self.game)
+                        new_state.enter_state()
+                    if self.current_button == self.quit_game:
+                        self.game.playing = False
+                        self.game.running = False
 
             
 
     def draw(self):
         super().draw()
         for obj in self.hover:
-            #create a copy of the rect
             hover_rect = obj.rect.copy()
             hover_rect.inflate_ip(20, 10)
-            #pygame.time.set_timer(self.canvas.blit(obj.image, hover_rect), 500)
             self.canvas.blit(obj.image, hover_rect)
         for obj in self.drawable:
             obj.draw()

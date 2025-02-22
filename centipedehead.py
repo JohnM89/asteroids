@@ -53,7 +53,7 @@ class CentipedeHead(CommonAlien):
                 self.body.velocity += accel
         else:
             if self.body.velocity.length < PLAYER_SPEED:
-                acceleration = forward * (ACCELERATION * 0.002)
+                acceleration = forward * (ACCELERATION * 0.2)
                 accel = pymunk.Vec2d(acceleration.x, acceleration.y)
                 self.body.velocity += accel
             else:

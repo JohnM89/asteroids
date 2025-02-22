@@ -11,7 +11,7 @@ class Game():
         self.prev_time = 0
         self.running, self.playing = True, True
         self.default_state = None
-        self.state_stack = []         
+        self.state_stack = []
         #load assets    
         #self.load_assets()
         self.start_state()
@@ -36,10 +36,13 @@ class Game():
        
 
     def handle_events(self):
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
+        if self.state_stack:
+            self.state_stack[-1].handle_events(events)
 
     def update(self):
         if self.state_stack:

@@ -14,11 +14,14 @@ class Title(State):
     
     def update(self, dt):
         super().update(dt)
-        #self.title_box.get_hudd(self.hudd)
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            new_state = StartMenu(self.game)
-            new_state.enter_state()
+        
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                print("registered")
+                if event.key == pygame.K_SPACE:
+                    new_state = StartMenu(self.game)
+                    new_state.enter_state()
     
     def draw(self):
         #pass

@@ -44,15 +44,18 @@ class AsteroidField(pygame.sprite.Sprite):
         ],
     ]
 
-    def __init__(self, level, asteroids, updatable, drawable, space):
+    def __init__(self, level):
         #pygame.sprite.Sprite.__init__(self, self.containers)
         pygame.sprite.Sprite.__init__(self)
         #initalize timer at 0
         self.level = weakref.proxy(level)
-        self.asteroids = asteroids
-        self.updatable = updatable
-        self.drawable = drawable
-        self.space = space
+        self.asteroid_spawn_rate = level.asteroid_spawn_rate
+        self.max_asteroids = level.max_asteroids
+        self.asteroids = level.asteroids
+        self.updatable = level.updatable
+        self.drawable = level.drawable
+        self.space = level.space
+        self.scaling_factor = level.scaling_factor
         self.spawn_timer = 0.0
 
     def spawn(self, radius, position, velocity, space):
@@ -68,14 +71,13 @@ class AsteroidField(pygame.sprite.Sprite):
     def update(self, dt):
         self.spawn_timer += dt
         #if spawn_timer overtakes spawn rate reset spawn_timer and spawn new asteroid
-        if self.spawn_timer > ASTEROID_SPAWN_RATE and self.level.current_asteroid_count <= MAX_ASTEROIDS:
+        if self.spawn_timer > self.asteroid_spawn_rate and self.level.current_asteroid_count <= self.max_asteroids:
             self.spawn_timer = 0
             self.level.current_asteroid_count += 1
-            print(self.level.current_asteroid_count)
             #spawn a new asteroid at random edge
             edge = random.choice(self.edges)
             #determine a random speed in range
-            speed = random.randint(40,100)
+            speed = random.randint(40,100) * self.scaling_factor
             #velocity takes vector point and multiplys by speed
             velocity = edge[0] * speed
             #randomly rotates within in a range
