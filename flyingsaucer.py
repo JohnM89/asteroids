@@ -19,7 +19,7 @@ class FlyingSaucer(CommonAlien):
         self.shape.collision_type = 5
         self.shape.mass = 40 * self.radius
         self.max_view_distance = 150
-        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
+        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter, self.radius)
         #add diagonal directions as well
         self.timer = 0
 

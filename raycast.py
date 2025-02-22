@@ -2,10 +2,10 @@ import pymunk
 import pygame
 import math
 class RayCast:
-    def __init__(self,space, canvas, max_distance=1000, shape_filter=pymunk.ShapeFilter(), directions=[(1,0),(-1,0),(0,1),(0,-1), (0.3827, -0.9239), (0.7071, -0.7071), (0.9239, -0.3827),
+    def __init__(self,space, canvas, max_distance=1000, shape_filter=pymunk.ShapeFilter(), radius=6, directions=[(1,0),(-1,0),(0,1),(0,-1), (0.3827, -0.9239), (0.7071, -0.7071), (0.9239, -0.3827),
     (0.9239,  0.3827), (0.7071,  0.7071), (0.3827,  0.9239),
     (-0.3827,  0.9239), (-0.7071,  0.7071), (-0.9239,  0.3827),
-    (-0.9239, -0.3827), (-0.7071, -0.7071), (-0.3827, -0.9239)], radius=math.pi):
+    (-0.9239, -0.3827), (-0.7071, -0.7071), (-0.3827, -0.9239)]):
         self.colour = (255,255,0)
         self.max_distance = max_distance
         self.shape_filter = shape_filter

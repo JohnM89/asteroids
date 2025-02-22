@@ -13,7 +13,7 @@ class GameOver(State):
         self.drawable.add(self.menu_box)
 
     def add_score(self):
-        pass
+
 
     def update(self, dt):
         super().update(dt)

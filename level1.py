@@ -55,6 +55,7 @@ class Level1(State):
         ###
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
         self.hudd["lives"] = self.player.lives
+        self.hudd["score"] = self.score 
         ###
         self.updatable.add(self.player, self.asteroidfield, self.commonenemyspawns, self.score_ui, self.lives_ui)
         self.drawable.add(self.player)
@@ -106,8 +107,8 @@ class Level1(State):
             enemy = objA.game_object
             shot = objB.game_object
         enemy.damage_accumulated += damage
-        self.hudd["score"] += 1
         if enemy.damage_accumulated >= enemy.split_threshold:
+            self.score += 1 
             if hasattr(enemy, "joints") and hasattr(enemy, "rotation_limit_list"):
                 for joint in enemy.joints:
                     if joint in self.space.constraints:
@@ -218,10 +219,11 @@ class Level1(State):
         ast_obj = objA.game_object
         if arbiter.is_first_contact == True:            
             ast_obj.damage_accumulated += damage
-            self.hudd["score"] += 1
+            #self.hudd["score"] += 1
             #make this a standalone funciton 
             if ast_obj.damage_accumulated >= ast_obj.split_threshold:
                 shot_obj.kill()
+                self.score += 1
                 contact = arbiter.contact_point_set.points[0]
                 contact_point = contact.point_a
                 self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)

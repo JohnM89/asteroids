@@ -16,7 +16,7 @@ class CentipedeHead(CommonAlien):
         #self.shape.collision_type = 5
         self.shape.mass = 40 * self.radius
         self.max_view_distance = 300
-        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
+        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter, self.radius)
         #self.shape.filter = pymunk.ShapeFilter(group=2)
         
     def draw(self):

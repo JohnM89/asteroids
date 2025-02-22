@@ -13,7 +13,7 @@ class Scourge(CommonAlien):
         self.shape.collision_type = 5
         self.max_view_distance = 100
         self.shape.mass = 30 * self.radius
-        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
+        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter, self.radius)
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
         if hasattr(result, "point"):    
