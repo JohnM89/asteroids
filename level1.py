@@ -2,7 +2,8 @@ from state import State
 from userinterface import UserInterface
 from player import Player
 from shot import Shot   
-from asteroid import Asteroid   
+from asteroid import Asteroid 
+from explosion_animate import Explosion 
 from asteroidfield import AsteroidField
 from pause import Pause
 from game_over import GameOver  
@@ -53,7 +54,7 @@ class Level1(State):
         self.asteroidfield = AsteroidField(self)
         self.commonenemyspawns = CommonEnemySpawns(self)
         ###
-        self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space)
+        self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space, self.canvas)
         self.hudd["lives"] = self.player.lives
         self.hudd["score"] = self.score 
         ###
@@ -68,6 +69,8 @@ class Level1(State):
         self.enemy_shot_asteroid_handler = self.space.add_collision_handler(6, 2)
         self.shot_enemy_handler = self.space.add_collision_handler(3, 5)
         self.enemy_asteroid_handler = self.space.add_collision_handler(5, 2)
+        self.rocket_asteroid_handler = self.space.add_collision_handler(7, 2)
+        self.rocket_enemy_handler = self.space.add_collision_handler(7, 5)
 
         #need a collision handler manager class
         self.player_asteroid_handler.post_solve = self.post_solve_p_a
@@ -78,7 +81,82 @@ class Level1(State):
         self.player_pickup_handler.begin = self.begin_p_p
         self.player_enemy_handler.post_solve = self.post_solve_p_e
         self.enemy_asteroid_handler.post_solve = self.post_solve_e_a
+        self.rocket_asteroid_handler.post_solve = self.post_solve_r_a   
+        self.rocket_enemy_handler.post_solve = self.post_solve_r_e  
         ###
+    def post_solve_r_e(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length 
+        if impact_force >= IMPACT_THRESHOLD:
+            damage = min(max(impact_force * IMPACT_NORMALIZER * self.scaling_factor, MAX_IMPACT_DAMAGE), MIN_IMPACT_DAMAGE)
+        else:
+            damage = MIN_IMPACT_DAMAGE
+        objA, objB = arbiter.shapes
+        if objA.game_object.shape.collision_type == 7:
+            r_shot = objA.game_object
+            enemy = objB.game_object
+        else:
+            enemy = objA.game_object
+            r_shot = objB.game_object
+        if arbiter.is_first_contact == True:
+            enemy.damage_accumulated += damage
+            print(enemy.damage_accumulated)
+            r_shot.kill()
+            self.space.remove(r_shot.body, r_shot.shape)
+            if enemy.damage_accumulated >= enemy.split_threshold:
+                self.score += 1
+                if hasattr(enemy, "joints") and hasattr(enemy, "rotation_limit_list"):
+                    for joint in enemy.joints:
+                        if joint in self.space.constraints:
+                            self.space.remove(joint)
+                    for rotation in enemy.rotation_limit_list:
+                        if rotation in self.space.constraints:
+                            self.space.remove(rotation)
+                self.commonenemyspawns.current_alien_count -= 1
+                contact = arbiter.contact_point_set.points[0]
+                contact_point = contact.point_a
+                enemy.kill()
+                self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+                self.space.remove(enemy.body, enemy.shape)
+        return True
+
+    def post_solve_r_a(self, arbiter, space, data):
+        impact_force = arbiter.total_impulse.length
+        #if impact_force >= IMPACT_THRESHOLD:
+        #sort out shot impact
+        if impact_force >= 50:
+            damage = max(min(impact_force * IMPACT_NORMALIZER * self.scaling_factor, MAX_IMPACT_DAMAGE),MIN_IMPACT_DAMAGE)
+        else:
+            damage = MAX_IMPACT_DAMAGE 
+        objA, objB = arbiter.shapes
+        if objB.game_object.shape.collision_type == 7:
+            r_shot = objB.game_object
+            ast_obj = objA.game_object
+        else:
+            ast_obj = objB.game_object
+            r_shot = objA.game_object
+        if arbiter.is_first_contact == True:
+            ast_obj.damage_accumulated += damage
+            r_shot.kill()
+            #self.hudd["score"] += 1
+            #make this a standalone funciton
+            if ast_obj.damage_accumulated >= ast_obj.split_threshold:
+                self.score += 1
+                contact = arbiter.contact_point_set.points[0]
+                contact_point = contact.point_a
+                explosion = Explosion(contact_point.x, contact_point.y, 60)
+                self.drawable.add(explosion)
+                self.updatable.add(explosion)
+                self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
+                normal = arbiter.normal
+                impulse = arbiter.total_impulse.length
+                ast_obj.split(self.updatable, self.drawable, self.asteroids, self.space, normal, impulse, contact_point)
+            self.space.remove(r_shot.body, r_shot.shape)
+        return True
+
+
+
+
+
     def post_solve_p_e_s(self, arbiter, space, data):
         impact_force = arbiter.total_impulse.length
         if impact_force >= IMPACT_THRESHOLD:
@@ -228,6 +306,9 @@ class Level1(State):
                 self.score += 1
                 contact = arbiter.contact_point_set.points[0]
                 contact_point = contact.point_a
+                explosion = Explosion(contact_point.x, contact_point.y, 60)
+                self.drawable.add(explosion)
+                self.updatable.add(explosion)
                 self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
                 normal = arbiter.normal
                 impulse = arbiter.total_impulse.length

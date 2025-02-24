@@ -12,3 +12,5 @@ q : 2
 q : 1
 dqw : 2
 hi : 7
+damn it! : 2
+wa    : 8

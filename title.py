@@ -7,8 +7,11 @@ from startmenu import StartMenu
 class Title(State):
     def __init__(self, game):
         super().__init__(game)
+        self.background = pygame.image.load("./blue-preview.png")
+        self.background = pygame.transform.scale(self.background, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        #self.canvas.blit(self.background, (0, 0))
         self.hudd = {"Start":"Game"}       
-        self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Title Screen")
+        self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Asteroids")
         self.updatable.add(self.title_box)
         self.drawable.add(self.title_box)
     
@@ -27,6 +30,7 @@ class Title(State):
         #pass
         super().draw()
         #self.canvas.fill((0, 0, 0))
+        self.canvas.blit(self.background, (0,0))
         for obj in self.drawable:
             obj.draw()
             self.canvas.blit(obj.image, obj.rect)

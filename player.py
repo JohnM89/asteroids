@@ -3,12 +3,14 @@ from circleshape import *
 from constants import *
 import math
 from bomb import Bomb
+from rocket import Rocket
 from shot import *
 
 class Player(CircleShape):
-    def __init__(self, x , y, shot_class, updatable, drawable, space):
+    def __init__(self, x , y, shot_class, updatable, drawable, space, canvas):
         super().__init__(x, y, PLAYER_RADIUS, mass=.5)
         self.rotation = 0
+        self.canvas = canvas    
         self.radius = PLAYER_RADIUS
         self.shots = shot_class
         self.updatable = updatable
@@ -30,7 +32,7 @@ class Player(CircleShape):
         self.bombs = 3
         self.yamato = 0
         self.multishot = 0
-        self.rockets = 0
+        self.rockets = 3
         self.sheild = 0
         self.shape.game_object = self
 
@@ -104,6 +106,17 @@ class Player(CircleShape):
             self.space.add(shot.body, shot.shape)
             self.timer = PLAYER_SHOOT_COOLDOWN
 
+    def fire_rocket(self, position, space, canvas):
+        if self.timer <= 0:
+            if self.rockets > 0:
+                self.rockets -= 1
+                rocket = Rocket(position.x, position.y, space, canvas)
+                self.updatable.add(rocket)
+                self.drawable.add(rocket)
+                rocket.body.velocity = pymunk.Vec2d(0, 1).rotated(self.rotation) * PLAYER_SHOOT_SPEED / 2
+                self.space.add(rocket.body, rocket.shape)
+                self.timer = PLAYER_SHOOT_COOLDOWN
+
     def handle_colour(self, dt):
         if self.respawn_timer > 0:
             self.respawn_timer -= dt    
@@ -137,6 +150,8 @@ class Player(CircleShape):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.shoot(self.body.position, self.space)
+        if keys[pygame.K_r]:
+            self.fire_rocket(self.body.position, self.space, self.canvas)
         if keys[pygame.K_w]:
             self.move(dt)
         if keys[pygame.K_s]:
