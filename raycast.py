@@ -9,6 +9,7 @@ class RayCast:
         self.colour = (255,255,0)
         self.max_distance = max_distance
         self.shape_filter = shape_filter
+        self.all_results = []
         self.radius = radius
         self.space = space
         self.canvas = canvas
@@ -26,13 +27,18 @@ class RayCast:
                 dir_x = direction[0]
                 dir_y = direction[1]
             end = (pos_x + dir_x * self.max_distance, pos_y + dir_y * self.max_distance)
-            result = self.space.segment_query_first((pos_x, pos_y), end, radius=self.radius, shape_filter=self.shape_filter)
+            result = self.space.segment_query((pos_x, pos_y), end, radius=self.radius, shape_filter=self.shape_filter)
             if result != None:
-                if hasattr(result, "point"):
-                    if result.point != None:
-                        if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
+                result.sort(key=lambda r: r.alpha)
+                self.all_results.extend(result)
+                for res in result:
+                    if hasattr(res, "point"):
+                        if hasattr(res, "shape") and hasattr(res.shape, "game_object"):
                 ##debug 
-                            pygame.draw.line(self.canvas, self.colour, (pos_x, pos_y), (result.point), 5)
-                            return result
+                            pygame.draw.line(self.canvas, self.colour, (pos_x, pos_y), (res.point), 5)
+        if self.all_results != None:
+            self.all_results.sort(key=lambda r: r.alpha)
+            return self.all_results
+            
 
         return None

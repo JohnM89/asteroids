@@ -15,27 +15,30 @@ class CentipedeHead(CommonAlien):
         self.rotation_limit_list = []
         #self.shape.collision_type = 5
         self.shape.mass = 40 * self.radius
-        self.max_view_distance = 300
+        self.max_view_distance = 200
         self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter, self.radius)
         #self.shape.filter = pymunk.ShapeFilter(group=2)
         
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
-        if hasattr(result, "point"):
-            if result.point != None:
-                if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
-                    if result.shape.game_object.__class__.__name__ == "FuelDrop":
-                        x , y = result.point
-                        if x != 0 or y != 0:
-                            towards = True  
-                            self.rotate(x, y, towards)
-                            boost = True
-                            self.move(boost)
-                        else:
-                            x , y = result.point
-                            if x != 0 or y != 0:
-                                self.rotate(x, y)
-                                self.move()
+        for res in result:
+        #if hasattr(result, "point"):
+            #if result.point != None:
+            if hasattr(res, "shape") and hasattr(res.shape, "game_object"):
+                if res.shape.game_object.__class__.__name__ == "FuelDrop":
+                    x , y = res.point
+                    if x != 0 or y != 0:
+                        towards = True  
+                        self.rotate(x, y, towards)
+                        boost = True
+                        self.move(boost)
+                        break
+                else:
+                    x , y = result[0].point
+                    if x != 0 or y != 0:
+                        self.rotate(x, y)
+                        self.move()
+                        break
     def rotate(self,x, y, towards=False):
         if towards == True:
             direction = (pymunk.Vec2d(x, y) - self.body.position).angle
@@ -47,13 +50,13 @@ class CentipedeHead(CommonAlien):
     def move(self, boost=False):
         forward = pymunk.Vec2d(1, 0).rotated(self.body.angle)
         if boost == True:
-            if self.body.velocity.length < PLAYER_SPEED:
+            if self.body.velocity.length < (PLAYER_SPEED / 2):
                 acceleration = forward * ACCELERATION
                 accel = pymunk.Vec2d(acceleration.x, acceleration.y)
                 self.body.velocity += accel
         else:
-            if self.body.velocity.length < PLAYER_SPEED:
-                acceleration = forward * (ACCELERATION * 0.2)
+            if self.body.velocity.length < (PLAYER_SPEED / 2):
+                acceleration = forward * (ACCELERATION * 0.002)
                 accel = pymunk.Vec2d(acceleration.x, acceleration.y)
                 self.body.velocity += accel
             else:

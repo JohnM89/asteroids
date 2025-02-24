@@ -245,6 +245,22 @@ class Level1(State):
             self.player.bombs += objB.game_object.bomb
             objB.game_object.kill()
             self.space.remove(objB.game_object.body, objB.game_object.shape)
+        elif hasattr(objB.game_object, "sheild"):
+            self.player.sheild += objB.game_object.sheild
+            objB.game_object.kill()  
+            self.space.remove(objB.game_object.body, objB.game_object.shape)
+        elif hasattr(objB.game_object, "yamato"):
+            self.player.yamato += objB.game_object.yamato    
+            objB.game_object.kill()
+            self.space.remove(objB.game_object.body, objB.game_object.shape)
+        elif hasattr(objB.game_object, "rockets"):
+            self.player.rockets += objB.game_object.rockets   
+            objB.game_object.kill()
+            self.space.remove(objB.game_object.body, objB.game_object.shape)
+        elif hasattr(objB.game_object, "multishot"):
+            self.player.multishot += objB.game_object.multishot 
+            objB.game_object.kill()
+            self.space.remove(objB.game_object.body, objB.game_object.shape)
         return False
     #player - asteroid handler  
     def post_solve_p_a(self, arbiter, space, data):
@@ -281,7 +297,7 @@ class Level1(State):
         pass
     ###
     def create_drop(self, position_x, position_y, space, updatable, drawable):
-        drops = [FuelDrop(position_x,position_y, space), BombDrop(position_x, position_y, space)]
+        drops = [FuelDrop(position_x,position_y, space), BombDrop(position_x, position_y, space), RocketDrop(position_x, position_y, space), YamatoCannon(position_x, position_y, space), SheildDrop(position_x, position_y, space), MultiShot(position_x, position_y, space)]
         new_drop = random.choice(drops)
         updatable.add(new_drop)
         drawable.add(new_drop)

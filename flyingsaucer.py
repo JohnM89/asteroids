@@ -1,5 +1,6 @@
 from commonalien import *
 from enemy_shot import EnemyShot
+from constants import * 
 import math
 import pygame   
 import pymunk.pygame_util
@@ -25,18 +26,36 @@ class FlyingSaucer(CommonAlien):
 
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
-        if hasattr(result, "point"):
-            if result.point != None:
-                if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
-                    if result.shape.game_object.__class__.__name__ == "Player":
-                        x , y = result.point
-                        if x != 0 or y != 0:
-                            self.rotate(x, y)
-                            self.shoot(x, y)
+        for res in result:
+        #if hasattr(result, "point"):
+            #if result.point != None:
+            if hasattr(res, "shape") and hasattr(res.shape, "game_object"):
+                if res.shape.game_object.__class__.__name__ == "Player":
+                    x , y = res.point
+                    print("seen")
+                    if x != 0 or y != 0:
+                        self.rotate(x, y)
+                        self.shoot(x, y)
+                        break
+                else:
+                    x , y = result[0].point 
+                    if x != 0 or y != 0:
+                        self.rotate(x , y)
+                        self.move()
+                        break
         #pass
     def rotate(self, x, y):
         direction = (pymunk.Vec2d(x , y) - self.body.position).angle
         self.body.angle = direction
+    def move(self):
+        if self.body.velocity.length < (PLAYER_SPEED / 2):
+            forward = pymunk.Vec2d(1, 0).rotated(self.body.angle)
+            acceleration = forward * (ACCELERATION * .002)
+            accel = pymunk.Vec2d(acceleration.x, acceleration.y)
+            self.body.velocity += accel
+        else:
+            self.body.velocity *= DRAG_COEFFICENT
+
     def shoot(self, x, y):
         if self.timer <= 0:
             print(f"shooting{x}{y}")

@@ -2,6 +2,7 @@ import pygame
 from circleshape import *
 from constants import *
 import math
+from bomb import Bomb
 from shot import *
 
 class Player(CircleShape):
@@ -26,7 +27,7 @@ class Player(CircleShape):
         self.lives = 1
         self.health = 100
         self.fuel = 50.0    
-        self.bombs = 0
+        self.bombs = 3
         self.shape.game_object = self
 
         #requirement for utilizing sprite groups, currently just set to transparent
@@ -71,19 +72,21 @@ class Player(CircleShape):
             #print(self.fuel)
         #else:
             #pass
-
-    #def bomb(self):
-        #if self.player.bombs > 0:
-            #bomb = Bomb(position.x, position.y, space)
+    
+    #lets just borrow shot cooldown until we refactor event handling for keys in player class 
+    def bomb(self):
+        if self.bombs > 0 and self.timer <=0:
+            self.bombs -= 1
+            bomb = Bomb( 200 )
             #self.updatable.add(bomb)
             #self.drawable.add(bomb)
+            bomb.explode(self.body.position.x, self.body.position.y, self.space)
+            #self.space.remove(bomb.body, bomb.shape)
+            self.timer = PLAYER_SHOOT_COOLDOWN
     def health_check(self):
         if self.health <= 0:
             self.lives -= 1
             self.health = 1000
-
-    #def check_fuel(self):
-        #if self.fuel <= 0:
        
 
 
@@ -109,6 +112,7 @@ class Player(CircleShape):
                 else:
                     self.current_colour = self.player_colour
         #listener for a,w,s,d, and calling respective movement functions
+
 
     def shoot_timer(self, dt):
         if self.timer > 0:
@@ -137,4 +141,6 @@ class Player(CircleShape):
             self.rotate(dt * -1)
         if keys[pygame.K_d]:
             self.rotate(dt)
+        if keys[pygame.K_b]:
+            self.bomb()
 
