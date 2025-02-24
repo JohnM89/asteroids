@@ -29,7 +29,24 @@ class Bomb:
                 
                 impulse_magnitude = explosion_force * (falloff)
                 impulse_vector = direction * impulse_magnitude
+                damage = max(min(impulse_magnitude * IMPACT_NORMALIZER, MAX_IMPACT_DAMAGE),MIN_IMPACT_DAMAGE)
                 body.apply_impulse_at_world_point(impulse_vector, obj.point)
+                if hasattr(shape.game_object, "damage_accumulated"):
+                    shape.game_object.damage_accumulated += damage
+                    if shape.game_object.damage_accumulated >= shape.game_object.split_threshold:
+                        if hasattr(shape.game_object, "joints") and hasattr(shape.game_object, "rotation_limit_list"):
+                            for joint in shape.game_object.joints:
+                                if joint in space.constraints:
+                                    space.remove(joint)
+                            for rotation in shape.game_object.rotation_limit_list:
+                                if rotation in space.constraints:
+                                    space.remove(rotation)
+                #self.commonenemyspawns.current_alien_count -= 1
+                #contact = arbiter.contact_point_set.points[0]
+                            #contact_point = obj.point
+                        shape.game_object.kill()
+                        space.remove(shape.body, shape)
+                            #self.create_drop(contact_point.x, contact_point.y, self.space, self.updatable, self.drawable)
     #def update(self, dt):
         #pass
 

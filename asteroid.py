@@ -54,8 +54,8 @@ class Asteroid(CircleShape):
             #using rotate on asteroids velocity to create 2 new vectors going in opposite directions rotated by angle
             vector1 = normal.rotated(angle)
             vector2 = normal.rotated(-angle)
-            extra_velocity1 = vector1 * (impulse * boost)
-            extra_velocity2 = vector2 * (impulse * boost)
+            extra_velocity1 = vector1 * (-impulse * boost)
+            extra_velocity2 = vector2 * (-impulse * boost)
             #new radius is old radius minus the value of min radius
             radius = self.radius - ASTEROID_MIN_RADIUS
             #create 2 new asteroids, add velocity and accelerate by 1.2 

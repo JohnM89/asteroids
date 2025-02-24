@@ -32,7 +32,12 @@ class CommonAlien(CircleShape):
             return True
     def update(self, dt):
         if hasattr(self, "body"):
-            self.rect.center = (int(self.body.position.x), int(self.body.position.y))
+            try:
+                self.rect.center = (int(self.body.position.x), int(self.body.position.y))
+            except Exception as e:
+                print("some BODY is missing", e)
+                self.rect.center = (0,0)
+            
         self.time_to_live -= dt 
         if self.time_to_live <= dt and self.bounds_check() == True:
             if hasattr(self, "joints"):

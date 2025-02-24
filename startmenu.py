@@ -1,6 +1,7 @@
 from state import State 
 from constants import * 
-from userinterface import UserInterface 
+from userinterface import UserInterface
+from highscores import HighScores    
 import pygame
 from level1 import Level1
 class StartMenu(State):
@@ -45,6 +46,9 @@ class StartMenu(State):
                 if event.key == pygame.K_RETURN:
                     if self.current_button == self.start_game:
                         new_state = Level1(self.game)
+                        new_state.enter_state()
+                    if self.current_button == self.highscore:
+                        new_state = HighScores(self.game)
                         new_state.enter_state()
                     if self.current_button == self.quit_game:
                         self.game.playing = False

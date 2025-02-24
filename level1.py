@@ -25,16 +25,16 @@ class Level1(State):
         ###
         self.x = self.GAME_WIDTH / 2
         self.y = self.GAME_HEIGHT / 2
-        self.max_asteroids = MAX_ASTEROIDS
-        self.alien_max_count = ALIEN_MAX_COUNT
-        self.asteroid_spawn_rate = ASTEROID_SPAWN_RATE
-        self.alien_spawn_rate = ALIEN_SPAWN_RATE
-        self.acceleration = ACCELERATION    
+        self.score = 0  
+        self.scaling_factor = 1 #+ math.floor((self.score * 0.001))
+        self.max_asteroids = MAX_ASTEROIDS #* self.scaling_factor
+        self.alien_max_count = ALIEN_MAX_COUNT #* self.scaling_factor
+        self.asteroid_spawn_rate = ASTEROID_SPAWN_RATE #* self.scaling_factor
+        self.alien_spawn_rate = ALIEN_SPAWN_RATE #* self.scaling_factor
+        self.acceleration = ACCELERATION #* self.scaling_factor
         self.current_alien_count = 0
         self.current_asteroid_count = 0
         ###
-        self.score = 0
-        self.scaling_factor = 1 
         ###
         self.hudd = {"score": 0, "lives": 99}
         self.lives_ui = UserInterface(self.SCREEN_WIDTH - 86, self.SCREEN_HEIGHT - 64, self.SCREEN_WIDTH / 8, 64, "GravityRegular5", "Fonts/GravityRegular5.ttf", "Lives: ","lives", self.hudd)
@@ -210,7 +210,9 @@ class Level1(State):
     ###
     def post_solve_s_a(self, arbiter, space, data):
         impact_force = arbiter.total_impulse.length
-        if impact_force >= IMPACT_THRESHOLD:
+        #if impact_force >= IMPACT_THRESHOLD:
+        #sort out shot impact   
+        if impact_force >= 50:
             damage = max(min(impact_force * IMPACT_NORMALIZER * self.scaling_factor, MAX_IMPACT_DAMAGE),MIN_IMPACT_DAMAGE)
         else:
             damage = 0
@@ -330,6 +332,7 @@ class Level1(State):
         self.space.step(dt)
         self.collision_check()
         self.end_game()
+        self.hudd["score"] = self.score 
         self.lives_ui.get_hudd(self.hudd)
         self.score_ui.get_hudd(self.hudd)
         self.updatable.update(dt)

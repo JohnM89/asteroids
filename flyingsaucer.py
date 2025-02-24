@@ -26,27 +26,29 @@ class FlyingSaucer(CommonAlien):
 
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
-        for res in result:
+        #for res in result:
         #if hasattr(result, "point"):
             #if result.point != None:
-            if hasattr(res, "shape") and hasattr(res.shape, "game_object"):
-                if res.shape.game_object.__class__.__name__ == "Player":
-                    x , y = res.point
-                    print("seen")
-                    if x != 0 or y != 0:
-                        self.rotate(x, y)
-                        self.shoot(x, y)
-                        break
-                else:
-                    x , y = result[0].point 
-                    if x != 0 or y != 0:
-                        self.rotate(x , y)
-                        self.move()
-                        break
+        if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
+            if result.shape.game_object.__class__.__name__ == "Player":
+                x , y = result.point
+                if x != 0 or y != 0:
+                    towards = True
+                    self.rotate(x, y, towards)
+                    self.shoot(x, y)
+            else:
+                x , y = result.point 
+                if x != 0 or y != 0:
+                    self.rotate(x , y)
+                    self.move()
         #pass
-    def rotate(self, x, y):
-        direction = (pymunk.Vec2d(x , y) - self.body.position).angle
-        self.body.angle = direction
+    def rotate(self, x, y, towards=False):
+        if towards == True:
+            direction = (pymunk.Vec2d(x, y) - self.body.position).angle
+            self.body.angle = direction 
+        else:
+            direction = (pymunk.Vec2d(x , y) - self.body.position).angle
+            self.body.angle = (direction - math.pi)
     def move(self):
         if self.body.velocity.length < (PLAYER_SPEED / 2):
             forward = pymunk.Vec2d(1, 0).rotated(self.body.angle)

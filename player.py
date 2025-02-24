@@ -28,6 +28,10 @@ class Player(CircleShape):
         self.health = 100
         self.fuel = 50.0    
         self.bombs = 3
+        self.yamato = 0
+        self.multishot = 0
+        self.rockets = 0
+        self.sheild = 0
         self.shape.game_object = self
 
         #requirement for utilizing sprite groups, currently just set to transparent

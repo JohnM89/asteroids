@@ -13,27 +13,27 @@ class Scourge(CommonAlien):
         self.shape.collision_type = 5
         self.max_view_distance = 100
         self.shape.mass = 30 * self.radius
-        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter, self.radius)
+        self.ray_cast = RayCast(self.space, self.canvas, self.max_view_distance, self.shape.filter)
     def draw(self):
         result = self.ray_cast.cast_ray(self.body.position.x, self.body.position.y)
-        for res in result:
-            if hasattr(res, "point"):    
-                if res.point != None:
-                    if hasattr(res, "shape") and hasattr(res.shape, "game_object"):
-                        if res.shape.game_object.__class__.__name__ == "Player":
-                            x , y = res.point  
-                            if x != 0 or y != 0:
-                                towards = True
-                                self.rotate(x, y, towards)
-                                boost = True
-                                self.move(boost)
-                                break
-                        else:
-                            x , y = result[0].point
-                            if x != 0 or y != 0:
-                                self.rotate(x, y)
-                                self.move()
-                                break
+        #for res in result:
+        if hasattr(result, "point"):    
+            if result.point != None:
+                if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
+                    if result.shape.game_object.__class__.__name__ == "Player":
+                        x , y = result.point  
+                        if x != 0 or y != 0:
+                            towards = True
+                            self.rotate(x, y, towards)
+                            boost = True
+                            self.move(boost)
+                            
+                    else:
+                        x , y = result.point
+                        if x != 0 or y != 0:
+                            self.rotate(x, y)
+                            self.move()
+                            
     def rotate(self,x, y, towards=False):
         if towards == True:
             direction = (pymunk.Vec2d(x, y) - self.body.position).angle

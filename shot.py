@@ -5,7 +5,7 @@ from constants import *
 
 class Shot(CircleShape):
     def __init__(self, x, y, space):
-        super().__init__(x, y, SHOT_RADIUS, mass=0.1)
+        super().__init__(x, y, SHOT_RADIUS, mass=0.5)
         
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  

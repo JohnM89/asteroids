@@ -1,0 +1,14 @@
+hi : 0
+hello : 0
+a : 0
+
+yo : 0doh! : 0
+q : 0
+damn : 0
+q : 0
+oh : 3
+dang : 10
+q : 2
+q : 1
+dqw : 2
+hi : 7
