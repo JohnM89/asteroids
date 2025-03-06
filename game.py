@@ -1,7 +1,7 @@
 import pygame
 import os
-from constants import *
-from title import Title 
+from game.constants import *
+from menus.title import Title 
 
 class Game():
     def __init__(self):
