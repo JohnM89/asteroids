@@ -3,7 +3,7 @@ from entities.squareshape import *
 from game.constants import *
 from .font import FontManager
 class UserInterface(SquareShape):
-    def __init__(self, x, y, w, h, font, path, ui_text, key=None, hudd=None, sprite=None):
+    def __init__(self, x, y, w, h, font=None, path=None, ui_text='', key=None, hudd=None, sprite_array=None):
         super().__init__(x, y, w, h)
         self.font_size = 16
         self.font = font
@@ -12,6 +12,23 @@ class UserInterface(SquareShape):
         self.x = x
         self.y = y
         self.__path = path
+        self.sprite = sprite_array
+        if self.sprite != None:
+            self.image = pygame.Surface((w,h), pygame.SRCALPHA)
+            self.image = self.image.convert_alpha()
+            self.rect = self.image.get_rect(center=(x,y))
+            self.base_image = self.sprite[0]
+            self.sprite_image = self.base_image.copy()
+            self.sprite_image = pygame.transform.scale(self.sprite_image, (self.w, self.h))
+            #self.sprite_width = 64
+            #self.sprite_height = 32
+            #self.frame_interval = 0.75
+            #self.frame_timer = 0
+            #self.frame = 0
+            #self.max_frame = 9
+            #self.frame_y = 0
+            #self.frame_x = 0
+            #self.crop_rect = pygame.Rect(self.frame_x, self.frame_y, self.sprite_width, self.sprite_height)
         self.hudd = hudd
         self.key = key
         self.ui_text = ui_text
@@ -35,6 +52,8 @@ class UserInterface(SquareShape):
             self.rect = pygame.Rect(self.x,self.y,self.w,self.h)
             self.rect.center = (self.x,self.y)
             pygame.draw.rect(screen, (255, 255, 255), self.rect, width=2, border_radius=2)
+            #self.image.blit(self.sprite_image, (0,0))
+            #self.screen.blit(self.image, self.rect)
             #box_x = self.rect.x + (self.rect.w / 100) * 6
             #box_y = self.rect.y + self.rect.h - (self.rect.h / 1.5)
             self.font_manager.render_text(screen, self.text, self.font, (255,255,255), self.rect.x, self.rect.y, self.rect.width, self.rect.height)
@@ -43,10 +62,30 @@ class UserInterface(SquareShape):
 
             self.rect = self.image.get_rect()
             self.rect.center = (self.x, self.y)
-            pygame.draw.rect(self.image, (255,255,255), (0, 0, self.w, self.h), width=2, border_radius=2)
+            if hasattr(self, 'sprite_image'):
+            #pygame.draw.rect(self.image, (255,255,255), (0, 0, self.w, self.h), width=2, border_radius=2)
+                self.image.blit(self.sprite_image, (0,0))
+            else:
+                pygame.draw.rect(self.image, (255, 255, 255), (0 , 0, self.w, self.h), width=2, border_radius=2)
+            #self.screen.blit(self.image, self.rect)
             self.font_manager.render_text(self.image, self.text , self.font, (255,255,255), 0, 0, self.rect.width, self.rect.height)
     def update(self, dt):
+        #if self.sprite != None:
+            #if self.frame_timer > self.frame_interval:
+                #self.frame += 1
+                #if self.frame <= self.max_frame:
+                #    self.frame_timer = 0
+                #else:
+                    #self.frame = 0
+            #else:
+                #self.frame_timer += dt
 
+            #self.frame_x = self.frame * self.sprite_width
+            #self.crop_rect = pygame.Rect(self.frame_x, self.frame_y, self.sprite_width, self.sprite_height)
+            #sub_surf = self.base_image.subsurface(self.crop_rect)
+            #angle_degrees = -math.degrees(self.body.angle)
+            #self.sprite_image = pygame.transform.rotate(sub_surf, angle_degrees)
+            #self.rect = self.sprite_image.get_rect(center=(int(self.body.position.x),int(self.body.position.y)))
         pass
     #heads up display data 
     def get_hudd(self, hudd=None, text=None):

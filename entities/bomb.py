@@ -9,7 +9,7 @@ class Bomb:
     def explode(self, x, y, space):
         explosion_check = space.point_query((x, y), 2*self.radius, pymunk.ShapeFilter(categories=PLAYER_CATEGORY,mask=PLAYER_MASK))
         explosion_center = (x , y)
-        explosion_force = 7000000 # huge number but it works lol!
+        explosion_force = 4000000 # huge number but it works lol!
         for obj in explosion_check:
             if obj.distance:
                 shape = obj.shape   

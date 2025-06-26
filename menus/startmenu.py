@@ -10,11 +10,14 @@ class StartMenu(State):
         self.hudd = {"Start":"___"}
         self.__font = "GravityRegular5"
         self.__font_path = "./assets/fonts/Fonts/GravityRegular5.ttf"
+        self.sprite_array = [pygame.image.load('./assets/source/Super Pixel Sci-Fi UI - Futura Max/window_theme/window_theme_light_gray/panel_focused.png'), pygame.image.load('./assets/source/Super Pixel Sci-Fi UI - Futura Max/window_theme/window_theme_light_gray/panel_unfocused.png')]
+        self.background = pygame.image.load('./assets/source/2D_ShootEmUp_GUI/PNG/UserInterface/Background/Background_1.png')
+        self.background = pygame.transform.scale(self.background, (self.canvas.get_width(), self.canvas.get_height()))
         self.title_box = pygame.Rect(self.SCREEN_WIDTH /2, self.SCREEN_HEIGHT / 10, 256, 64 * 10)
-        self.start_game = UserInterface(self.title_box.x, self.title_box.y + (64 * 2), 256, 64, self.__font, self.__font_path, "New Game" )
-        self.preferences = UserInterface(self.title_box.x , self.title_box.y + (64 * 4), 256, 64, self.__font, self.__font_path, "Preferences" )        
-        self.highscore = UserInterface(self.title_box.x, self.title_box.y + (64 * 6), 256, 64, self.__font, self.__font_path, "HighScore" )        
-        self.quit_game = UserInterface(self.title_box.x, self.title_box.y + (64 * 8) , 256, 64, self.__font, self.__font_path, "Quit" )        
+        self.start_game = UserInterface(self.title_box.x, self.title_box.y + (64 * 2), 256, 64, self.__font, self.__font_path, "New Game", sprite_array=self.sprite_array )
+        self.preferences = UserInterface(self.title_box.x , self.title_box.y + (64 * 4), 256, 64, self.__font, self.__font_path, "Preferences", sprite_array=self.sprite_array )        
+        self.highscore = UserInterface(self.title_box.x, self.title_box.y + (64 * 6), 256, 64, self.__font, self.__font_path, "HighScore", sprite_array=self.sprite_array )        
+        self.quit_game = UserInterface(self.title_box.x, self.title_box.y + (64 * 8) , 256, 64, self.__font, self.__font_path, "Quit", sprite_array=self.sprite_array )        
         self.hover = pygame.sprite.Group()
         self.buttons = pygame.sprite.Group()
         self.buttons.add(self.start_game, self.preferences, self.highscore, self.quit_game)
@@ -58,6 +61,7 @@ class StartMenu(State):
 
     def draw(self):
         super().draw()
+        self.canvas.blit(self.background, (0,0))
         for obj in self.hover:
             hover_rect = obj.rect.copy()
             hover_rect.inflate_ip(20, 10)

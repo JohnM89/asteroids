@@ -9,7 +9,7 @@ class State():
         self.prev_state = None
         self.GAME_WIDTH, self.GAME_HEIGHT = GAME_WIDTH, GAME_HEIGHT
         self.SCREEN_WIDTH, self.SCREEN_HEIGHT = SCREEN_WIDTH, SCREEN_HEIGHT
-        self.canvas = pygame.Surface((self.GAME_WIDTH, self.GAME_HEIGHT))
+        self.canvas = pygame.Surface((self.GAME_WIDTH, self.GAME_HEIGHT), pygame.SRCALPHA)
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.camera = Camera(self.screen, self.canvas)
         self.updatable = pygame.sprite.Group()
@@ -19,7 +19,7 @@ class State():
         #self.camera.update_camera()
 
     def draw(self):
-        self.canvas.fill((254, 0, 0))
+        self.canvas.fill((0, 0, 0, 0))
         self.screen.fill((0,0,0))
         #self.screen.blit(self.canvas,(0,0), self.camera.camera_box)
         #self.drawable.draw(self.screen)

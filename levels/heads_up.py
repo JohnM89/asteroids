@@ -5,13 +5,13 @@ from ..entities.circleshape import *
 from ..game.constants import *
 
 class HeadsUp(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, hudd=None):
 
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
             super().__init__()
- 
+        self.hudd = hudd
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect(center=(x, y))

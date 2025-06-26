@@ -2,6 +2,7 @@ import pygame
 from .circleshape import *
 from game.constants import *
 import math
+from effects.explosions.thrust import Thrust
 from .bomb import Bomb
 from effects.explosions.bomb_explosion import BombExplode
 from .yamato import Yamato
@@ -50,6 +51,7 @@ class Player(CircleShape):
         self.shape.collision_type = 1
         self.shape.filter = pymunk.ShapeFilter(categories=PLAYER_CATEGORY, mask=PLAYER_MASK)
         self.space.add(self.body, self.shape)
+        self.thrust = None
         self.lives = 1
         self.health = 100
         self.fuel = 50.0    
@@ -57,7 +59,9 @@ class Player(CircleShape):
         self.yamato = 0
         self.multishot = 0
         self.rockets = 99
-        self.sheild = 0
+        self.sheilds = 1    
+        self.sheilds_health = 10
+        #self.sheild_hit = False
         self.shape.game_object = self
 
 
@@ -76,6 +80,8 @@ class Player(CircleShape):
     def draw(self):
         self.image.fill((0,0,0,0))
         #pygame.draw.circle(self.sprite_image, self.current_colour, (self.radius, self.radius), self.radius, width=2)
+
+
         self.image.blit(self.sprite_image, (0,0))
     #set rotation based on turn speed and delta time
     def rotate(self, dt):
@@ -85,6 +91,7 @@ class Player(CircleShape):
     #update position based on vector , speed and delta time
     def move(self, dt):
         if self.fuel > 0:
+
             forward = pymunk.Vec2d(1, 0).rotated(self.rotation)
             if self.body.velocity.length < PLAYER_SPEED:
                 acceleration = forward * ACCELERATION * dt
@@ -93,6 +100,8 @@ class Player(CircleShape):
             else:
                 self.body.velocity *= DRAG_COEFFICENT
             self.fuel -= 0.0001
+            #self.updatable.remove(thrust)
+            #self.drawable.remove(thrust)
             #print(self.fuel)
         #else:
             #pass
@@ -103,7 +112,8 @@ class Player(CircleShape):
     def bomb(self):
         if self.bombs > 0 and self.timer <=0:
             self.bombs -= 1
-            bomb = Bomb( 200 )
+
+            bomb = Bomb( 150 )
             bomb.explode(self.body.position.x, self.body.position.y, self.space)
             bomb_sprite = BombExplode(self.body.position.x, self.body.position.y)
             self.updatable.add(bomb_sprite)
@@ -112,7 +122,10 @@ class Player(CircleShape):
     def health_check(self):
         if self.health <= 0:
             self.lives -= 1
-            self.health = 1000       
+            self.health = 100 
+        if self.sheilds_health <= 0:
+            self.sheilds -= 1   
+            self.sheilds_health = 100
 
     def shoot(self, position, space, rotation):
         if self.timer <= 0:
@@ -150,7 +163,9 @@ class Player(CircleShape):
                 rocket.body.velocity = pymunk.Vec2d(1, 0).rotated(self.rotation) * (PLAYER_SHOOT_SPEED * 1.5)
                 self.space.add(rocket.body, rocket.shape)
                 self.rocket_timer = PLAYER_SHOOT_COOLDOWN 
-
+    #def animate_sheild(self):
+        #hit = SheildHit(self.body.position.x, self.body.position.y)
+    
     #def yamato_cannon(self, position, space):
         #if self.yamato_timer <=0:
             #self.yamato -= 1
@@ -212,10 +227,15 @@ class Player(CircleShape):
         if keys[pygame.K_r]:
             self.fire_rocket(self.body.position, self.space, self.rotation, self.canvas)
         if keys[pygame.K_w]:
+            #if not self.thrust:
+                #self.thrust = Thrust(self, (self.body.position.x, self.body.position.y), self.body.position.rotated(self.rotation))
+
             self.move(dt)
         if keys[pygame.K_s]:
+
             self.move(dt * -1)
         if keys[pygame.K_a]:
+
             self.rotate(dt * -1)
         if keys[pygame.K_d]:
             self.rotate(dt)

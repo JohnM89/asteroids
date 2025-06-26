@@ -12,6 +12,7 @@ from effects.explosions.rocket_impact_explosion import RocketImpact
 from effects.explosions.shot_impact import ShotImpact
 from effects.explosions.shot_splat import ShotSplat
 from effects.explosions.blood_splat import BloodSplat
+from effects.explosions.sheild_hit import SheildHit
 from entities.walls import Walls
 from .commonenemyspawns import * 
 from entities.pickup import *
@@ -41,10 +42,22 @@ class Level1(State):
         self.current_alien_count = 0
         self.current_asteroid_count = 0
         ###
+
+        self.background_layer = pygame.image.load('./assets/source/Bright/blue_green.png').convert_alpha()        #for img in self.background_layers:
+        self.background_layer_stars1 = pygame.image.load('./assets/source/stars_blue.png').convert_alpha()
+        
+        self.background_layer_stars2 = pygame.image.load('./assets/source/stars_yellow.png').convert_alpha()
+
+        self.background_layer_stars1 = pygame.transform.scale(self.background_layer_stars1, (GAME_WIDTH, GAME_HEIGHT))
+        self.background_layer_stars2 = pygame.transform.scale(self.background_layer_stars2, (GAME_WIDTH, GAME_HEIGHT))
+        self.background_layer_stars2 = pygame.transform.rotate(self.background_layer_stars2, 90)
+        self.background_layer = pygame.transform.scale(self.background_layer, (GAME_WIDTH, GAME_HEIGHT))
+        #self.canvas_background = pygame.image.load('./assets/images/layer2.png').convert_alpha()
+        #self.canvas_background = pygame.transform.scale_by(self.canvas_background, 3)
        # self.hud_display = HeadsUp()
         ###
         self.hudd = {"score": 0, "lives": 99, "fuel": 50,"health": 100}
-        self.hud_display = HeadsUp(128, self.SCREEN_HEIGHT - 64, 500, 128, hudd=self.hudd)
+        self.hud_display = HeadsUp(256 + 8, self.SCREEN_HEIGHT - 16, 512, 256, hudd=self.hudd)
         #self.hud_display = HeadsUp(self.SCREEN_WIDTH /2, self.SCREEN_HEIGHT / 2, 1052, 352, hudd=self.hudd)
         #self.lives_ui = UserInterface(self.SCREEN_WIDTH - 86, self.SCREEN_HEIGHT - 64, self.SCREEN_WIDTH / 8, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Lives: ","lives", self.hudd)
         #self.score_ui = UserInterface(128, 64, 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Score: ","score", self.hudd)
@@ -65,6 +78,8 @@ class Level1(State):
         self.commonenemyspawns = CommonEnemySpawns(self)
         ###
         self.player = Player(self.x, self.y, self.shots, self.updatable, self.drawable, self.space, self.canvas)
+
+        #self.background_layer = pygame.transform.scale(self.background_layer, (GAME_WIDTH, GAME_HEIGHT))
         self.hudd["lives"] = self.player.lives
         self.hudd["score"] = self.score
         self.hudd["health"] = self.player.health    
@@ -191,7 +206,13 @@ class Level1(State):
         player = objA.game_object
         if arbiter.is_first_contact == True:
             print(damage)
-            player.health -= damage
+            if player.sheilds <= 0:
+                player.health -= damage
+            else:
+                player.sheilds_health -= damage
+                hit = SheildHit(player.body.position.x, player.body.position.y)
+                self.updatable.add(hit)
+                self.drawable.add(hit)
         return True
 
     def post_solve_s_e(self, arbiter, space, data):
@@ -306,8 +327,11 @@ class Level1(State):
         else:
             player = objB.game_object
         if arbiter.is_first_contact == True:
-            player.health -= damage
-            print(player.health)
+            if player.sheilds <= 0:
+                player.health -= damage
+                print(player.health)
+            else:
+                player.sheilds_health -= damage
         return True
 
     #pymunk collision handling functions
@@ -358,8 +382,8 @@ class Level1(State):
             self.player.bombs += objB.game_object.bomb
             objB.game_object.kill()
             self.space.remove(objB.game_object.body, objB.game_object.shape)
-        elif hasattr(objB.game_object, "sheild"):
-            self.player.sheild += objB.game_object.sheild
+        elif hasattr(objB.game_object, "sheilds"):
+            self.player.sheilds += objB.game_object.sheilds
             objB.game_object.kill()  
             self.space.remove(objB.game_object.body, objB.game_object.shape)
         elif hasattr(objB.game_object, "yamato"):
@@ -388,11 +412,19 @@ class Level1(State):
             asteroid = objB.game_object
         if arbiter.is_first_contact == True:
             print(player.health)
-            if player.lives > 0:
-                if player.respawn_timer <= 0:
-                    player.health -= damage  
-                    player.respawn_timer = PLAYER_RESPAWN_TIMER
-                    self.hudd["lives"] = player.lives
+            if player.sheilds <= 0:
+            #if player.lives > 0:
+                #if player.respawn_timer <= 0:
+                player.health -= damage  
+                    #player.respawn_timer = PLAYER_RESPAWN_TIMER
+                    #self.hudd["lives"] = player.lives
+            else:
+                player.sheilds_health -= damage
+                #player.animate_sheild()
+                hit = SheildHit(player.body.position.x, player.body.position.y)
+                #player.animate_sheild(hit)
+                self.updatable.add(hit)
+                self.drawable.add(hit)
         return True 
     def pre_solve_p_a(self, arbiter, space, data):
         #dampen or conditionally ignore collision if sheilds or something
@@ -466,7 +498,11 @@ class Level1(State):
         ###
 
     def draw(self):
-        super().draw()   
+        super().draw()
+        self.screen.blit(self.background_layer, (-self.camera.camera_box.x * 0.4,-self.camera.camera_box.y * 0.4))
+        self.screen.blit(self.background_layer_stars1, (-self.camera.camera_box.x * 0.5, -self.camera.camera_box.y * 0.5))
+        self.screen.blit(self.background_layer_stars2, (-self.camera.camera_box.x * 0.6, -self.camera.camera_box.y * 0.6))
+        #self.canvas.blit(self.canvas_background, (0,0))
         for obj in self.drawable:
             obj.draw()
             self.canvas.blit(obj.image, obj.rect)

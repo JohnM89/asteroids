@@ -22,3 +22,17 @@ q : 3
 q : 1
 q : 3
 wwww' : 1
+qqq : 3
+r : 3
+qqq : 1
+dang : 2
+qqqq : 3
+qq : 4
+q : 2
+qqqqq : 4
+qqq : 10
+qqqq : 5
+q : 0
+q : 1
+qq : 0
+sq : 0
