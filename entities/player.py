@@ -227,8 +227,8 @@ class Player(CircleShape):
         if keys[pygame.K_r]:
             self.fire_rocket(self.body.position, self.space, self.rotation, self.canvas)
         if keys[pygame.K_w]:
-            #if not self.thrust:
-                #self.thrust = Thrust(self, (self.body.position.x, self.body.position.y), self.body.position.rotated(self.rotation))
+            if not self.thrust:
+                self.thrust = Thrust(self, (self.body.position.x, self.body.position.y), self.body.position.rotated(self.rotation))
 
             self.move(dt)
         if keys[pygame.K_s]:

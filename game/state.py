@@ -13,7 +13,7 @@ class State():
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.camera = Camera(self.screen, self.canvas)
         self.updatable = pygame.sprite.Group()
-        self.drawable = pygame.sprite.Group()
+        self.drawable = pygame.sprite.LayeredUpdates()
     def update(self, dt):
         self.updatable.update(dt)
         #self.camera.update_camera()

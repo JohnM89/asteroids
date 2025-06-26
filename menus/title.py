@@ -39,7 +39,7 @@ class Title(State):
         super().update(dt)
         self.alphaSurface.set_alpha(self.alpha)
         if self.fade_timer < 121:
-            if self.fade_timer > 100:
+            if self.fade_timer > 60:
                 if self.alpha != 0:
                     self.alpha = max(0, self.alpha - int(dt * 65))
             else:

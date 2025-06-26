@@ -1,7 +1,8 @@
 from game.state import State 
 from game.constants import * 
 from game.userinterface import UserInterface
-from .highscores import HighScores    
+from .highscores import HighScores 
+from effects.selection_button import SelectionButton
 import pygame
 from levels.level1 import Level1
 class StartMenu(State):
@@ -10,9 +11,12 @@ class StartMenu(State):
         self.hudd = {"Start":"___"}
         self.__font = "GravityRegular5"
         self.__font_path = "./assets/fonts/Fonts/GravityRegular5.ttf"
-        self.sprite_array = [pygame.image.load('./assets/source/Super Pixel Sci-Fi UI - Futura Max/window_theme/window_theme_light_gray/panel_focused.png'), pygame.image.load('./assets/source/Super Pixel Sci-Fi UI - Futura Max/window_theme/window_theme_light_gray/panel_unfocused.png')]
-        self.background = pygame.image.load('./assets/source/2D_ShootEmUp_GUI/PNG/UserInterface/Background/Background_1.png')
-        self.background = pygame.transform.scale(self.background, (self.canvas.get_width(), self.canvas.get_height()))
+        self.raised_button = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')
+        self.sprite_array = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png'), pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')]
+        self.done_animate = False
+        self.unpressed_button = self.sprite_array.copy()
+        self.background = pygame.image.load('./assets/source/pixelart_starfield_corona.png')
+        self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.title_box = pygame.Rect(self.SCREEN_WIDTH /2, self.SCREEN_HEIGHT / 10, 256, 64 * 10)
         self.start_game = UserInterface(self.title_box.x, self.title_box.y + (64 * 2), 256, 64, self.__font, self.__font_path, "New Game", sprite_array=self.sprite_array )
         self.preferences = UserInterface(self.title_box.x , self.title_box.y + (64 * 4), 256, 64, self.__font, self.__font_path, "Preferences", sprite_array=self.sprite_array )        
@@ -32,10 +36,18 @@ class StartMenu(State):
         self.hover.empty()
         for button in self.buttons:
             if button == self.current_button:
-                self.hover.add(button)
+                button.sprite_image = self.raised_button.copy()
+                button_animate = SelectionButton(self, button.x, button.y)
+                if self.done_animate:
+                    self.hover.add(button)
+                #self.drawable.add(button_animate)
+                #self.updatable.add(button_animate)
                 self.drawable.remove(button)
             else:
+                #button.sprite_image = self.sprite_array[0]
                 self.drawable.add(button)
+                #self.drawable.remove(self.button_animate)
+                #self.updatable.remove(self.button_animate)
 
     def handle_events(self, events):
         for event in events:
@@ -63,8 +75,12 @@ class StartMenu(State):
         super().draw()
         self.canvas.blit(self.background, (0,0))
         for obj in self.hover:
+            #obj.sprite_image = self.raised_button.copy()
             hover_rect = obj.rect.copy()
-            hover_rect.inflate_ip(20, 10)
+            #obj.sprite_image = self.unpressed_button[0]
+            #to have it stand out 
+            #hover_rect.inflate_ip(20, 10)
+            
             self.canvas.blit(obj.image, hover_rect)
         for obj in self.drawable:
             obj.draw()
