@@ -30,7 +30,7 @@ class Thrust(pygame.sprite.Sprite):
         self.sprite_image = self.base_image.copy()
         self.sprite_width = 64
         self.sprite_height = 32
-        self.frame_interval = .75     
+        self.frame_interval = .05     
         self.frame_timer = 0
         self.frame = 0
         #self.max_frame = int(self.base_image.get_width() // self.sprite_width)

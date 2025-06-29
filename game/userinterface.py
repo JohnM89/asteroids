@@ -3,7 +3,7 @@ from entities.squareshape import *
 from game.constants import *
 from .font import FontManager
 class UserInterface(SquareShape):
-    def __init__(self, x, y, w, h, font=None, path=None, ui_text='', key=None, hudd=None, sprite_array=None):
+    def __init__(self, x, y, w, h, font=None, path=None, ui_text='', key=None, hudd=None, sprite_array=None, font_colour=(255,255,255), overlay=None, overlay_offset_w=0, overlay_offset_h=0,  overlay_active=False):
         super().__init__(x, y, w, h)
         self.font_size = 16
         self.font = font
@@ -13,6 +13,11 @@ class UserInterface(SquareShape):
         self.y = y
         self.__path = path
         self.sprite = sprite_array
+        self.overlay = overlay
+        self.font_colour = font_colour
+        self.overlay_active = overlay_active
+        self.overlay_offset_w = overlay_offset_w
+        self.overlay_offset_h = overlay_offset_h
         if self.sprite != None:
             self.image = pygame.Surface((w,h), pygame.SRCALPHA)
             self.image = self.image.convert_alpha()
@@ -29,6 +34,15 @@ class UserInterface(SquareShape):
             #self.frame_y = 0
             #self.frame_x = 0
             #self.crop_rect = pygame.Rect(self.frame_x, self.frame_y, self.sprite_width, self.sprite_height)
+        
+        if self.overlay != None:
+            #self.overlay_image = pygame.Surface((w,h), pygame.SRCALPHA)
+            #self.rect = self.overlay_image.get_rect(center=(x,y))
+            self.base_overlay_image = self.overlay
+            self.overlay_sprite_image = self.base_overlay_image.copy()
+            self.overlay_sprite_image = pygame.transform.scale(self.overlay_sprite_image, (self.w, self.h))
+                
+
         self.hudd = hudd
         self.key = key
         self.ui_text = ui_text
@@ -56,7 +70,7 @@ class UserInterface(SquareShape):
             #self.screen.blit(self.image, self.rect)
             #box_x = self.rect.x + (self.rect.w / 100) * 6
             #box_y = self.rect.y + self.rect.h - (self.rect.h / 1.5)
-            self.font_manager.render_text(screen, self.text, self.font, (255,255,255), self.rect.x, self.rect.y, self.rect.width, self.rect.height)
+            self.font_manager.render_text(screen, self.text, self.font, self.font_colour, self.rect.x, self.rect.y, self.rect.width, self.rect.height)
         else:
             
 
@@ -65,11 +79,15 @@ class UserInterface(SquareShape):
             if hasattr(self, 'sprite_image'):
             #pygame.draw.rect(self.image, (255,255,255), (0, 0, self.w, self.h), width=2, border_radius=2)
                 self.image.blit(self.sprite_image, (0,0))
+            if hasattr(self, 'overlay_sprite_image') and self.overlay_active:
+                self.image.blit(self.overlay_sprite_image, (0,0))
             else:
-                pygame.draw.rect(self.image, (255, 255, 255), (0 , 0, self.w, self.h), width=2, border_radius=2)
+                pass
+                #pygame.draw.rect(self.image, (255, 255, 255), (0 , 0, self.w, self.h), width=2, border_radius=2)
             #self.screen.blit(self.image, self.rect)
-            self.font_manager.render_text(self.image, self.text , self.font, (255,255,255), 0, 0, self.rect.width, self.rect.height)
+            self.font_manager.render_text(self.image, self.text , self.font, self.font_colour, 0, 0, self.rect.width, self.rect.height)
     def update(self, dt):
+        self.overlay_active = self.overlay_active
         #if self.sprite != None:
             #if self.frame_timer > self.frame_interval:
                 #self.frame += 1

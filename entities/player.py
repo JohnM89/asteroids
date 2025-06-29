@@ -10,16 +10,18 @@ from .rocket import Rocket
 from .shot import *
 
 class Player(CircleShape):
-    def __init__(self, x , y, shot_class, updatable, drawable, space, canvas):
+    def __init__(self, player_sprite, x , y, shot_class, updatable, drawable, space, canvas):
         super().__init__(x, y, 32, mass=.5)
         self.rotation = 0
         #self.angle_degrees = 0
         self.canvas = canvas
+        self.player_sprite = player_sprite
         self.image = pygame.Surface((3*self.radius, 3*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         #self.rect = self.image.get_rect(center=(x,y))
         self.rect = self.image.get_rect(center=(self.body.position))
-        self.base_image = pygame.image.load("./assets/images/Red_Player_Ship_9_Small.png")
+        self.base_image = self.player_sprite
+        #self.base_image = pygame.image.load("./assets/images/Red_Player_Ship_9_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         ###
@@ -54,13 +56,13 @@ class Player(CircleShape):
         self.thrust = None
         self.lives = 1
         self.health = 100
-        self.fuel = 50.0    
+        self.fuel = 100    
         self.bombs = 99
         self.yamato = 0
         self.multishot = 0
         self.rockets = 99
         self.sheilds = 1    
-        self.sheilds_health = 10
+        self.sheilds_health = 100
         #self.sheild_hit = False
         self.shape.game_object = self
 
@@ -120,12 +122,21 @@ class Player(CircleShape):
             self.drawable.add(bomb_sprite)
             self.timer = PLAYER_SHOOT_COOLDOWN
     def health_check(self):
-        if self.health <= 0:
-            self.lives -= 1
-            self.health = 100 
         if self.sheilds_health <= 0:
-            self.sheilds -= 1   
-            self.sheilds_health = 100
+            if self.sheilds > 0:
+                self.sheilds -= 1   
+                self.sheilds_health = 100
+            else:
+                self.sheilds_health = 0
+            if self.sheilds <= 0:
+                if self.sheilds_health <= 0:
+                    if self.health <= 0:
+                        if self.lives > 0:
+                            self.lives -= 1
+                            self.health = 100 
+                        else:
+                            self.health = 0
+
 
     def shoot(self, position, space, rotation):
         if self.timer <= 0:

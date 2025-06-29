@@ -20,6 +20,7 @@ class Pause(State):
                 if event.key == pygame.K_q:
                     self.exit_state()
                     self.exit_state()
+                    self.exit_state()
 
     def draw(self):
         super().draw()
