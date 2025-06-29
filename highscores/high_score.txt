@@ -38,3 +38,5 @@ qq : 0
 sq : 0
 q : 6
 q qwqw : 0
+nice1 : 0
+ : 5
