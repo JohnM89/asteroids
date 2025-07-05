@@ -9,18 +9,19 @@ import pygame
 import pymunk.pygame_util
 from game.raycast import RayCast
 class FlyingSaucer(CommonAlien):
-    def __init__(self, x, y, radius, updatable, drawable, space, canvas, colour=(0,0,0)):
+    def __init__(self, x, y, radius, space, level, kind):
 
-        super().__init__(x , y, radius, space, colour)
+        super().__init__(x , y, radius, space)
         ##debug     
-        self.canvas = canvas
+        #self.canvas = level.canvas
         ## 
         self.skin = []
         for img in os.listdir('./assets/images/flyingsaucer'):
             self.skin.append(pygame.image.load(os.path.join('./assets/images/flyingsaucer', img)))
         self.rotation = 0
-        self.updatable = updatable
-        self.drawable = drawable    
+        self.updatable = level.updatable
+        self.drawable = level.drawable   
+        self.canvas = level.canvas
         self.shape.friction = 9.0
         self.shape.elasticity = 0.6
         self.shape.collision_type = 5
@@ -28,6 +29,8 @@ class FlyingSaucer(CommonAlien):
         self.image = pygame.Surface((4*self.radius,4*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect(center=(x,y))
+
+        #self.rect = self.image.get_rect(center=(self.body.position))
         #self.base_image = pygame.image.load("./assets/source/Export/Enemies - Base/0.5x/Enemy_1_B_Small.png")
         self.base_image = random.choice(self.skin)
         self.base_image = pygame.transform.scale(self.base_image, (3*self.radius, 3*self.radius))

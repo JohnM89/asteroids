@@ -54,12 +54,16 @@ class Level1(State):
         self.background_layer_stars1 = pygame.image.load('./assets/source/stars_blue.png').convert_alpha()
         
         self.background_layer_stars2 = pygame.image.load('./assets/source/stars_yellow.png').convert_alpha()
+        #self.background_layer_stars1 = pygame.transform.scale(self.background_layer_stars1, (GAME_HEIGHT, GAME_WIDTH))
+        #self.background_layer_stars2 = pygame.transform.scale(self.background_layer_stars2, (GAME_HEIGHT, GAME_WIDTH))
+        #self.background_layer_stars2 = pygame.transform.rotate(self.background_layer_stars2, 180)
+        #self.background_layer = pygame.transform.scale(self.background_layer, (GAME_HEIGHT, GAME_WIDTH))
 
         self.background_layer_stars1 = pygame.transform.scale(self.background_layer_stars1, (GAME_WIDTH, GAME_HEIGHT))
         self.background_layer_stars2 = pygame.transform.scale(self.background_layer_stars2, (GAME_WIDTH, GAME_HEIGHT))
         self.background_layer_stars2 = pygame.transform.rotate(self.background_layer_stars2, 90)
         self.background_layer = pygame.transform.scale(self.background_layer, (GAME_WIDTH, GAME_HEIGHT))
-        #self.canvas_background = pygame.image.load('./assets/images/layer2.png').convert_alpha()
+        #self.canvas_background = pygame.image.load('./assets/images/layer2.png').convert_alpha()$
         #self.canvas_background = pygame.transform.scale_by(self.canvas_background, 3)
        # self.hud_display = HeadsUp()
         ###
@@ -77,7 +81,7 @@ class Level1(State):
         ###
         #self.asteroidfield = AsteroidField(self)
         self.alien_types = [Scourge, FlyingSaucer]
-        self.commonenemyspawns = Spawner(self, self.alien_types, self.aliens, self.scaling_factor, self.alien_spawn_rate, self.current_alien_count, self.alien_max_count, ALIEN_MAX_RADIUS, ALIEN_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ASTEROID_KINDS)
+        self.commonenemyspawns = Spawner(self, self.alien_types, self.aliens, self.scaling_factor, self.asteroid_spawn_rate, self.current_alien_count, self.alien_max_count, ALIEN_MAX_RADIUS, ALIEN_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ALIEN_KINDS)
         self.asteroidfield = Spawner(self, Asteroid, self.asteroids, self.scaling_factor, self.asteroid_spawn_rate, self.current_asteroid_count, self.max_asteroids, ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ASTEROID_KINDS )
         ###
         self.player = Player(self.player_sprite, self.x, self.y, self.shots, self.updatable, self.drawable, self.space, self.canvas)
@@ -313,6 +317,7 @@ class Level1(State):
     def update(self, dt):
         super().update(dt)
         self.space.step(dt)
+
         self.collision_check()
         self.end_game()
         self.hudd["score"] = self.score
@@ -326,13 +331,13 @@ class Level1(State):
         self.camera.update_camera(self.player)
         ###
         #gravity application need implmentation
-        # circle_shapes = [obj for obj in self.drawable if isinstance(obj, CircleShape)]
-        # for obj in circle_shapes:
-        #     for obj2 in circle_shapes:
-        #         if obj is not obj2:
-        #             obj.apply_gravity(obj2, dt)
+        circle_shapes = [obj for obj in self.updatable if isinstance(obj, CircleShape)]
+        for obj in circle_shapes:
+            for obj2 in circle_shapes:
+                if obj is not obj2:
+                    obj.apply_gravity(obj2, dt)
+
         #
-        ###
 
     def draw(self):
         super().draw()

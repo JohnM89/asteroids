@@ -5,11 +5,12 @@ import math
 import os
 import random
 import pygame   
+import pymunk
 from game.raycast import RayCast
 class Scourge(CommonAlien):
-    def __init__(self, x, y, radius, space, canvas, colour=(255,255,0)):
-        super().__init__(x , y, radius, space, colour)
-        self.canvas = canvas
+    def __init__(self, x, y, radius, space, level, kind):
+        super().__init__(x,y,radius, space)
+        self.canvas = level.canvas
         self.skin = []
         for img in os.listdir('./assets/images/scourge'):
             self.skin.append(pygame.image.load(os.path.join('./assets/images/scourge', img )).convert_alpha())
@@ -20,6 +21,8 @@ class Scourge(CommonAlien):
         self.shape.mass = 30 * self.radius
         self.image = pygame.Surface((4*self.radius,4*self.radius), pygame.SRCALPHA)
         #self.image = self.image.convert_alpha()
+        #self.x = x  
+        #self.y = y
         self.rect = self.image.get_rect(center=(x,y))
         #self.base_image = pygame.image.load("./assets/source/Export/Enemies - Base/0.5x/Enemy_1_A_Small.png")
         self.base_image = random.choice(self.skin)
@@ -42,6 +45,7 @@ class Scourge(CommonAlien):
         if hasattr(result, "point"):    
             if result.point != None:
                 if hasattr(result, "shape") and hasattr(result.shape, "game_object"):
+                    #print('i see')
                     if result.shape.game_object.__class__.__name__ == "Player":
                         x , y = result.point  
                         if x != 0 or y != 0:
@@ -49,7 +53,7 @@ class Scourge(CommonAlien):
                             self.rotate(x, y, towards)
                             boost = True
                             self.move(boost)
-                            
+
                     else:
                         x , y = result.point
                         if x != 0 or y != 0:
@@ -98,3 +102,4 @@ class Scourge(CommonAlien):
         #self.sprite_image = pygame.transform.rotate(sub_surf, angle_degrees)
         self.sprite_image = pygame.transform.rotate(self.base_image, angle_degrees - 90)
         self.rect = self.sprite_image.get_rect(center=(int(self.body.position.x),int(self.body.position.y)))
+        #print(self.body.position)

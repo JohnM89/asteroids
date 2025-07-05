@@ -5,15 +5,17 @@ import math
 from entities.circleshape import *
 from game.constants import *
 class CommonAlien(CircleShape):
-    def __init__(self, x, y, radius, space, colour=(0,0,0)):
+    def __init__(self, x, y, radius, space):
         super().__init__(x , y, radius)
+
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect(center=(self.body.position))
-        self.enemy_colour = colour
+        self.enemy_colour = (0,0,0)
         self.rect.center = (int(self.body.position.x), int(self.body.position.y))
         pygame.draw.circle(self.image, (self.enemy_colour), (self.radius, self.radius), self.radius, width=2)
         self.space = space
+        #self.kind = kind
         ##DEFAULT
         self.shape.filter = pymunk.ShapeFilter(categories=ENEMY_CATEGORY, mask=ENEMY_MASK)
         self.shape.collision_type = 5

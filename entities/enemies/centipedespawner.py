@@ -1,8 +1,9 @@
 
 from .centipedehead import CentipedeHead    
-from .centipedebody import CentipedeBody    
+from .centipedebody import CentipedeBody
 import math
 import pymunk
+import pymunk.constraints as pc 
 class CentipedeSpawn(position_x, position_y, updatable, drawable, space, canvas):
     def __init__(self):
         #self.radius = radius 
