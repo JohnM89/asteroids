@@ -7,15 +7,21 @@ from entities.circleshape import *
 from game.constants import *
 
 class BombExplode(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, assets):
 
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
             super().__init__()
-        self.explosions = []
-        for img in os.listdir('./assets/sprites/BombExplode/'):
-            self.explosions.append(pygame.image.load(os.path.join('./assets/sprites/BombExplode/', img)))
+        self.assets = assets
+        # OLD: Load images manually with os.path.join + pygame.image.load
+        # for img in os.listdir('./assets/sprites/BombExplode/'):
+        #     self.explosions.append(pygame.image.load(os.path.join('./assets/sprites/BombExplode/', img)))
+        # for img in os.listdir('./local_assets/assets/sprites/BombExplode/'):
+        #     self.explosions.append(pygame.image.load(os.path.join('./local_assets/assets/sprites/BombExplode/', img)))
+
+        # NEW: Use AssetManager
+        self.explosions = self.assets.images_in('sprites/BombExplode')
         self.radius = 80  
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.rect = self.image.get_rect(center=(x, y))

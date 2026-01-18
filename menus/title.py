@@ -7,9 +7,12 @@ from .startmenu import StartMenu
 from effects.meteor_intro import MeteorIntro
 #from level1 import Level1   
 class Title(State):
-    def __init__(self, game):
+    def __init__(self, game, assets):
         super().__init__(game)
-        self.background = pygame.image.load('./assets/images/blue-preview.png')
+        self.assets = assets
+        # self.background = pygame.image.load('./assets/images/blue-preview.png')
+        # self.background = pygame.image.load('./local_assets/assets/images/blue-preview.png')
+        self.background = self.assets.image('images/blue-preview.png')
         self.background = pygame.transform.scale(self.background, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.alphaSurface = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.alpha = 255
@@ -26,8 +29,11 @@ class Title(State):
         self.faded = False
         self.timer = 0
         self.hudd = {"Start":"Game"}
-        self.ui_sprites = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalA.png')]
-        self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Asteroids", sprite_array=None)
+        # self.ui_sprites = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalA.png')]
+        # self.ui_sprites = [pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalA.png')]
+        self.ui_sprites = [self.assets.image('source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalA.png')]
+        # self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Asteroids", sprite_array=None)
+        self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./local_assets/assets/fonts/Fonts/GravityRegular5.ttf", "Asteroids", sprite_array=None)
         #self.updatable.add(self.title_box)
         #self.drawable.add(self.title_box)
         
@@ -67,7 +73,7 @@ class Title(State):
             if event.type == pygame.KEYDOWN:
                 print("registered")
                 if event.key == pygame.K_SPACE:
-                    new_state = StartMenu(self.game)
+                    new_state = StartMenu(self.game, self.assets)
                     new_state.enter_state()
 
 

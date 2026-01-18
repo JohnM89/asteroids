@@ -24,7 +24,7 @@ class CommonAlien(CircleShape):
         self.time_to_live = ALIEN_TTL
         self.damage_accumulated = 0
         ##needs a different approach to health  
-        self.split_threshold = 100 * self.radius
+        self.split_threshold = 5 * self.radius
     
     def draw(self):
         pass

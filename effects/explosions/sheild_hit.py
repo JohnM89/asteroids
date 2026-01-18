@@ -22,7 +22,8 @@ class SheildHit(pygame.sprite.Sprite):
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.rect = self.image.get_rect(center=(x, y))
         #self.sprite_image = random.choice(self.explosions).convert_alpha()
-        self.sprite_image = pygame.image.load('./assets/images/Bubble_2.png').convert_alpha()
+        # self.sprite_image = pygame.image.load('./assets/images/Bubble_2.png').convert_alpha()
+        self.sprite_image = pygame.image.load('./local_assets/assets/images/Bubble_2.png').convert_alpha()
         self.sprite_image = pygame.transform.scale(self.sprite_image, (128, 128))
         self.time_to_live = .3
         #self.sprite_width = 160

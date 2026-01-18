@@ -1,19 +1,21 @@
 import pygame
 import os
 from game.constants import *
+from game.asset_manager import AssetManager
 from menus.title import Title 
 
 class Game():
     def __init__(self):
         pygame.init()
         self.game_clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         self.dt = 0
         self.prev_time = 0
         self.running, self.playing = True, True
         self.default_state = None
         self.state_stack = []
         #load assets    
-        #self.load_assets()
+        self.assets = AssetManager('./local_assets/assets')
         self.start_state()
 
     def run(self):
@@ -25,7 +27,7 @@ class Game():
             self.draw()
 
     def start_state(self):
-        self.default_state = Title(self)
+        self.default_state = Title(self, self.assets)
         self.state_stack.append(self.default_state)                  
             
     def get_dt(self):

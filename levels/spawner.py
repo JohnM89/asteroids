@@ -3,10 +3,11 @@ import pymunk
 import pygame
 import weakref  
 class Spawner(pygame.sprite.Sprite):
-    def __init__(self, level, entity_cls, group_type, scaling_factor, spawn_rate, current_count, max_count, max_radius, min_radius, height, width, kind, vectors=[(1,0),(-1,0),(0,1),(0,-1)]):
+    def __init__(self, level, entity_cls, group_type, scaling_factor, spawn_rate, current_count, max_count, max_radius, min_radius, height, width, kind, assets, vectors=[(1,0),(-1,0),(0,1),(0,-1)]):
         super().__init__()
         self.level = weakref.proxy(level)
         #self.level = level 
+        self.assets = assets    
         self.entity_cls = entity_cls
         self.group_type = group_type
         self.updatable = level.updatable
@@ -54,9 +55,9 @@ class Spawner(pygame.sprite.Sprite):
         return spawn_fn(choice, *args )
         
     
-    def setup_spawn(self, entity_cls, radius, position, velocity, kind):
+    def setup_spawn(self, entity_cls, radius, position, velocity, kind, assets):
         
-        entity = entity_cls(position.x, position.y, radius, self.space, self.level, kind)
+        entity = entity_cls(position.x, position.y, radius, self.space, self.level, kind, assets)
         entity.body.velocity = velocity 
         self.group_type.add(entity)
         self.updatable.add(entity)
@@ -80,7 +81,7 @@ class Spawner(pygame.sprite.Sprite):
             position = edge[1](random.uniform(0,1))
             kind = random.randint(1, self.kind)
             #TODO cant move forward till we figure out how to wrap in the centipede thingy 
-            self.spawn(self.min_radius * kind, position, velocity, kind)
+            self.spawn(self.min_radius * kind, position, velocity, kind, self.assets)
 
 
 

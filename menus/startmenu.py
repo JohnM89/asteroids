@@ -7,16 +7,25 @@ import pygame
 from .select_character import SelectCharacter   
 from levels.level1 import Level1
 class StartMenu(State):
-    def __init__(self, game):
+    def __init__(self, game, assets):
         super().__init__(game)
+        self.assets = assets
         self.hudd = {"Start":"___"}
         self.__font = "GravityRegular5"
-        self.__font_path = "./assets/fonts/Fonts/GravityRegular5.ttf"
-        self.raised_button = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')
-        self.sprite_array = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png'), pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')]
+        # self.__font_path = "./assets/fonts/Fonts/GravityRegular5.ttf"
+        self.__font_path = "./local_assets/assets/fonts/Fonts/GravityRegular5.ttf"
+        # self.raised_button = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')
+        # self.sprite_array = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png'), pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')]
+        # self.raised_button = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')
+        # self.sprite_array = [pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png'), pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')]
+        self.raised_button = self.assets.image('source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')
+        button_image = self.assets.image('source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')
+        self.sprite_array = [button_image, button_image]
         self.done_animate = False
         self.unpressed_button = self.sprite_array.copy()
-        self.background = pygame.image.load('./assets/source/pixelart_starfield_corona.png')
+        # self.background = pygame.image.load('./assets/source/pixelart_starfield_corona.png')
+        # self.background = pygame.image.load('./local_assets/assets/source/pixelart_starfield_corona.png')
+        self.background = self.assets.image('source/pixelart_starfield_corona.png')
         self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.title_box = pygame.Rect(self.SCREEN_WIDTH /2, self.SCREEN_HEIGHT / 10, 256, 64 * 10)
         self.start_game = UserInterface(self.title_box.x, self.title_box.y + (64 * 2), 256, 64, self.__font, self.__font_path, "New Game", sprite_array=None )
@@ -78,7 +87,7 @@ class StartMenu(State):
                         new_state = SelectCharacter(self.game)
                         new_state.enter_state()
                     if self.current_button == self.highscore:
-                        new_state = HighScores(self.game)
+                        new_state = HighScores(self.game, self.assets)
                         new_state.enter_state()
                     if self.current_button == self.quit_game:
                         self.game.playing = False

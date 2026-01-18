@@ -3,13 +3,16 @@ from .circleshape import *
 from game.constants import *
 
 class FuelDrop(CircleShape):
-    def __init__(self, x, y, space):
+    def __init__(self, x, y, space, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
         self.radius = self.radius * 3
+        self.assets = assets
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect()
-        self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_HealthPack_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_HealthPack_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Pickups/0.5x/Pickup_HealthPack_Small.png")
+        self.base_image = self.assets.image("source/Export/Pickups/0.5x/Pickup_HealthPack_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 64
@@ -42,13 +45,16 @@ class FuelDrop(CircleShape):
             self.rect.center = (int(self.body.position.x), int(self.body.position.y))
 
 class BombDrop(CircleShape):
-    def __init__(self, x, y, space):
+    def __init__(self, x, y, space, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
         self.radius = self.radius * 3
+        self.assets = assets
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_1_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_1_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Pickups/0.5x/Pickup_Crate_1_Small.png")
+        self.base_image = self.assets.image("source/Export/Pickups/0.5x/Pickup_Crate_1_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 64
@@ -81,13 +87,16 @@ class BombDrop(CircleShape):
             self.rect.center = (int(self.body.position.x), int(self.body.position.y))
 
 class SheildDrop(CircleShape):
-    def __init__(self, x, y, space):
+    def __init__(self, x, y, space, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
         self.radius = self.radius * 3
+        self.assets = assets
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_2_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_2_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Pickups/0.5x/Pickup_Crate_2_Small.png")
+        self.base_image = self.assets.image("source/Export/Pickups/0.5x/Pickup_Crate_2_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 64
@@ -119,13 +128,16 @@ class SheildDrop(CircleShape):
             self.rect.center = (int(self.body.position.x), int(self.body.position.y))
 
 class RocketDrop(CircleShape):
-    def __init__(self, x, y, space):
+    def __init__(self, x, y, space, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
         self.radius = self.radius * 3
+        self.assets = assets
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.base_image = pygame.image.load("./assets/source/Export/Ships - Missiles/Variation_B/0.5x/Missile_4_B_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Ships - Missiles/Variation_B/0.5x/Missile_4_B_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Ships - Missiles/Variation_B/0.5x/Missile_4_B_Small.png")
+        self.base_image = self.assets.image("source/Export/Ships - Missiles/Variation_B/0.5x/Missile_4_B_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 64
@@ -157,13 +169,16 @@ class RocketDrop(CircleShape):
         else:
             self.rect.center = (int(self.body.position.x), int(self.body.position.y))
 class YamatoCannon(CircleShape):
-    def __init__(self, x, y, space):
+    def __init__(self, x, y, space, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
         self.radius = self.radius * 3
+        self.assets = assets
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_3_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_3_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Pickups/0.5x/Pickup_Crate_3_Small.png")
+        self.base_image = self.assets.image("source/Export/Pickups/0.5x/Pickup_Crate_3_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 64
@@ -196,13 +211,16 @@ class YamatoCannon(CircleShape):
             self.rect.center = (int(self.body.position.x), int(self.body.position.y))
 
 class MultiShot(CircleShape):
-    def __init__(self, x, y, space):
+    def __init__(self, x, y, space, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
         self.radius = self.radius * 3
+        self.assets = assets
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_4_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Pickups/0.5x/Pickup_Crate_4_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Pickups/0.5x/Pickup_Crate_4_Small.png")
+        self.base_image = self.assets.image("source/Export/Pickups/0.5x/Pickup_Crate_4_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 64

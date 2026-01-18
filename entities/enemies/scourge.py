@@ -8,12 +8,11 @@ import pygame
 import pymunk
 from game.raycast import RayCast
 class Scourge(CommonAlien):
-    def __init__(self, x, y, radius, space, level, kind):
+    def __init__(self, x, y, radius, space, level, kind, assets):
         super().__init__(x,y,radius, space)
         self.canvas = level.canvas
-        self.skin = []
-        for img in os.listdir('./assets/images/scourge'):
-            self.skin.append(pygame.image.load(os.path.join('./assets/images/scourge', img )).convert_alpha())
+        self.assets = assets    
+        self.skin = self.assets.images_in('images/scourge', size=(3*self.radius, 3*self.radius))
         self.shape.friction = 9.0
         self.shape.elasticity = 0.8
         self.shape.collision_type = 5
@@ -26,7 +25,8 @@ class Scourge(CommonAlien):
         self.rect = self.image.get_rect(center=(x,y))
         #self.base_image = pygame.image.load("./assets/source/Export/Enemies - Base/0.5x/Enemy_1_A_Small.png")
         self.base_image = random.choice(self.skin)
-        self.base_image = pygame.transform.scale(self.base_image, (3*self.radius, 3*self.radius))
+        #self.base_image = self.assets.images(self.base_image, size=(3*self.radius, 3*self.radius))
+        # self.base_image = pygame.transform.scale(self.base_image, (3*self.radius, 3*self.radius))
         self.sprite_image = self.base_image.copy()
         self.sprite_width = 64
         self.sprite_height = 32

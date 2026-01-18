@@ -4,14 +4,28 @@ from game.userinterface import UserInterface
 import pygame
 import os
 #from .startmenu import StartMenu
-from effects.meteor_intro import MeteorIntro
+from effects.game_load_intro import LoadIntro
 from levels.level1 import Level1   
 class Level1Animate(State):
     def __init__(self, game, selected_sprite):
         super().__init__(game)
         self.selected_sprite = selected_sprite
-        self.background = pygame.image.load('./assets/source/Bright/blue_green.png')
-        self.background = pygame.transform.scale(self.background, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        # self.background = pygame.image.load('./assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/orange-back.png')
+        self.background = pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/orange-back.png')
+        #TODO stars, dim and brighten, asteroids "float", planets float (slightly less)
+        # self.backgroundast1 = pygame.image.load('./assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/asteroid-1.png')
+        # self.backgroundast2 = pygame.image.load('./assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/asteroid-2.png')
+        # self.backgroundstar = pygame.image.load('./assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/orange-stars.png')
+        # self.backgroundmoon = pygame.image.load('./assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/planet-1.png')
+        # self.backgroundplanet = pygame.image.load('./assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/planet-2.png')
+        self.backgroundast1 = pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/asteroid-1.png')
+        self.backgroundast2 = pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/asteroid-2.png')
+        self.backgroundstar = pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/orange-stars.png')
+        self.backgroundmoon = pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/planet-1.png')
+        self.backgroundplanet = pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Environments/Space Backgrounds 1/Backgrounds/orange/layered/planet-2.png')
+         
+        self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
         self.alphaSurface = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         #self.alpha = 255
         self.fade_timer = 0
@@ -21,7 +35,7 @@ class Level1Animate(State):
         #
         #self.animated_fade_panels = pygame.image.load(os.path.join('assets', 'source',"ButtonDigital_Press.png"))
         #
-        self.meteor = MeteorIntro(self, -10, self.SCREEN_HEIGHT / 2, 64)
+        self.meteor = LoadIntro(self, -10, self.SCREEN_HEIGHT / 2, 64)
         self.first_pass = True
         self.animate_meteor = False
         self.faded = False
@@ -29,15 +43,15 @@ class Level1Animate(State):
         self.hudd = {"Start":"Game"}
         #self.ui_sprites = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalA.png')]
         #self.title_box = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Asteroids", sprite_array=None)
-        #self.updatable.add(self.title_box)
-        #self.drawable.add(self.title_box)
+        # self.updatable.add(self.title_box)
+        # self.drawable.add(self.title_box)
         
     
     #def fade_in(self, dt):
         #if self.faded:
             
         #if self.timer == 5:
-            
+     
 
 
     def update(self, dt):
@@ -46,7 +60,7 @@ class Level1Animate(State):
         #if self.alpha != 0:
         #    self.alpha = max(0, self.alpha - int(dt * 65))
         #elif self.alpha == 0 and self.first_pass:
-        meteor = MeteorIntro(self, 0, self.SCREEN_HEIGHT / 2, 64 )
+        meteor = LoadIntro(self, 0, self.SCREEN_HEIGHT / 2, 64 )
         self.animate_meteor = True
         self.drawable.add(self.meteor, layer=1)
         self.updatable.add(self.meteor)

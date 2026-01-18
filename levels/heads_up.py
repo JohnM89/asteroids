@@ -15,7 +15,8 @@ class HeadsUp(pygame.sprite.Sprite):
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect(center=(x, y))
-        self.sprite_image = pygame.image.load("./spritesheet.png").convert_alpha()
+        # self.sprite_image = pygame.image.load("./spritesheet.png").convert_alpha()
+        self.sprite_image = pygame.image.load("./local_assets/assets/spritesheet.png").convert_alpha()
         self.sprite_width = 96
         self.sprite_height = 96
         self.frame_interval = .1 

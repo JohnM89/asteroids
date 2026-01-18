@@ -7,15 +7,21 @@ from entities.circleshape import *
 from game.constants import *
 
 class BloodSplat(pygame.sprite.Sprite):
-    def __init__(self, contact_point, rotation):
+    def __init__(self, contact_point, rotation, assets):
 
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
             super().__init__()
-        self.explosions = []
-        for img in os.listdir('./assets/sprites/BloodSplatSmall/'):
-            self.explosions.append(pygame.image.load(os.path.join('./assets/sprites/BloodSplatSmall/', img)).convert_alpha())
+        self.assets = assets
+        # OLD: Load images manually with os.path.join + pygame.image.load
+        # for img in os.listdir('./assets/sprites/BloodSplatSmall/'):
+        #     self.explosions.append(pygame.image.load(os.path.join('./assets/sprites/BloodSplatSmall/', img)).convert_alpha())
+        # for img in os.listdir('./local_assets/assets/sprites/BloodSplatSmall/'):
+        #     self.explosions.append(pygame.image.load(os.path.join('./local_assets/assets/sprites/BloodSplatSmall/', img)).convert_alpha())
+
+        # NEW: Use AssetManager
+        self.explosions = self.assets.images_in('sprites/BloodSplatSmall')
         self.radius = 16
         self.rotation = rotation
         #self.enemy_position = target.body.position

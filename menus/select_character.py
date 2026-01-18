@@ -10,12 +10,17 @@ class SelectCharacter(State):
         super().__init__(game)
         self.hudd = {"Start":"___"}
         self.__font = "GravityRegular5"
-        self.__font_path = "./assets/fonts/Fonts/GravityRegular5.ttf"
-        self.raised_button = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalB.png')
+        # self.__font_path = "./assets/fonts/Fonts/GravityRegular5.ttf"
+        self.__font_path = "./local_assets/assets/fonts/Fonts/GravityRegular5.ttf"
+        # self.raised_button = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalB.png')
+        self.raised_button = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Panels/Blue/FrameDigitalB.png')
 
-        self.spaceshipA = [pygame.image.load('./assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/sprites/Ships/ship-a/Sprites/ship-a1.png')]
-        self.spaceshipB = [pygame.image.load('./assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/sprites/Ships/ship-b/Sprites/ship-b1.png')]
-        self.spaceshipC = [pygame.image.load('./assets/battlecruiser.png')]
+        # self.spaceshipA = [pygame.image.load('./assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/sprites/Ships/ship-a/Sprites/ship-a1.png')]
+        # self.spaceshipB = [pygame.image.load('./assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/sprites/Ships/ship-b/Sprites/ship-b1.png')]
+        # self.spaceshipC = [pygame.image.load('./assets/battlecruiser.png')]
+        self.spaceshipA = [pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/sprites/Ships/ship-a/Sprites/ship-a1.png')]
+        self.spaceshipB = [pygame.image.load('./local_assets/assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/sprites/Ships/ship-b/Sprites/ship-b1.png')]
+        self.spaceshipC = [pygame.image.load('./local_assets/assets/battlecruiser.png')]
         
 
         #self.sprite_array = [pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png'), pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/White/ButtonDigital_Pressed.png')]

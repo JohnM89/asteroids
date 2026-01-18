@@ -10,18 +10,20 @@ from .rocket import Rocket
 from .shot import *
 
 class Player(CircleShape):
-    def __init__(self, player_sprite, x , y, shot_class, updatable, drawable, space, canvas):
+    def __init__(self, player_sprite, x , y, shot_class, updatable, drawable, space, canvas, assets):
         super().__init__(x, y, 32, mass=.5)
         self.rotation = 0
         #self.angle_degrees = 0
         self.canvas = canvas
         self.player_sprite = player_sprite
+        self.assets = assets
         self.image = pygame.Surface((3*self.radius, 3*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         #self.rect = self.image.get_rect(center=(x,y))
         self.rect = self.image.get_rect(center=(self.body.position))
         self.base_image = self.player_sprite
         #self.base_image = pygame.image.load("./assets/images/Red_Player_Ship_9_Small.png")
+        #self.base_image = pygame.image.load("./local_assets/images/Red_Player_Ship_9_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (2*self.radius, 2*self.radius))
         self.sprite_image = self.base_image.copy()
         ###
@@ -96,12 +98,15 @@ class Player(CircleShape):
 
             forward = pymunk.Vec2d(1, 0).rotated(self.rotation)
             if self.body.velocity.length < PLAYER_SPEED:
-                acceleration = forward * ACCELERATION * dt
+                speed_ratio = self.body.velocity.length / PLAYER_SPEED
+                boost_factor = 1.2 + (1 - speed_ratio) ** 3
+                acceleration = forward * (ACCELERATION * boost_factor) * dt
                 accel = pymunk.Vec2d(acceleration.x, acceleration.y)
                 self.body.velocity += accel
             else:
                 self.body.velocity *= DRAG_COEFFICENT
-            self.fuel -= 0.0001
+                #going backwards increments..
+            self.fuel -= (1 *  dt)
             #self.updatable.remove(thrust)
             #self.drawable.remove(thrust)
             #print(self.fuel)
@@ -117,7 +122,7 @@ class Player(CircleShape):
 
             bomb = Bomb( 150 )
             bomb.explode(self.body.position.x, self.body.position.y, self.space)
-            bomb_sprite = BombExplode(self.body.position.x, self.body.position.y)
+            bomb_sprite = BombExplode(self.body.position.x, self.body.position.y, self.assets)
             self.updatable.add(bomb_sprite)
             self.drawable.add(bomb_sprite)
             self.timer = PLAYER_SHOOT_COOLDOWN
@@ -140,7 +145,7 @@ class Player(CircleShape):
 
     def shoot(self, position, space, rotation):
         if self.timer <= 0:
-            shot = Shot(position.x, position.y, space, rotation)
+            shot = Shot(position.x, position.y, space, rotation, self.assets)
             self.shots.add(shot)
             self.updatable.add(shot)
             self.drawable.add(shot)
@@ -150,9 +155,9 @@ class Player(CircleShape):
 
     def multishot(self, position, space, rotation):
         if self.timer <= 0:
-            shot1 = Shot(position.x, position.y, space, rotation)
-            shot2 = Shot(position.x, position.y, space, rotation)
-            shot3 = Shot(position.x, position.y, space, rotation) 
+            shot1 = Shot(position.x, position.y, space, rotation, self.assets)
+            shot2 = Shot(position.x, position.y, space, rotation, self.assets)
+            shot3 = Shot(position.x, position.y, space, rotation, self.assets) 
             self.updatable.add(shot1, shot2, shot3)
             self.drawable.add(shot1, shot2, shot3)
             shot1.body.velocity = pymunk.Vec2d(1,0).rotated(self.rotation) * PLAYER_SHOOT_SPEED 
@@ -168,7 +173,7 @@ class Player(CircleShape):
         if self.rocket_timer <= 0:
             if self.rockets > 0:
                 self.rockets -= 1 
-                rocket = Rocket(position.x, position.y, space, rotation, canvas, self.updatable, self.drawable)
+                rocket = Rocket(position.x, position.y, space, rotation, canvas, self.updatable, self.drawable, self.assets)
                 self.updatable.add(rocket)
                 self.drawable.add(rocket)
                 rocket.body.velocity = pymunk.Vec2d(1, 0).rotated(self.rotation) * (PLAYER_SHOOT_SPEED * 1.5)
@@ -239,7 +244,7 @@ class Player(CircleShape):
             self.fire_rocket(self.body.position, self.space, self.rotation, self.canvas)
         if keys[pygame.K_w]:
             if not self.thrust:
-                self.thrust = Thrust(self, (self.body.position.x, self.body.position.y), self.body.position.rotated(self.rotation))
+                self.thrust = Thrust(self, (self.body.position.x, self.body.position.y), self.body.position.rotated(self.rotation), self.assets)
 
             self.move(dt)
         if keys[pygame.K_s]:

@@ -9,15 +9,14 @@ import pygame
 import pymunk.pygame_util
 from game.raycast import RayCast
 class FlyingSaucer(CommonAlien):
-    def __init__(self, x, y, radius, space, level, kind):
+    def __init__(self, x, y, radius, space, level, kind, assets):
 
         super().__init__(x , y, radius, space)
         ##debug     
         #self.canvas = level.canvas
         ## 
-        self.skin = []
-        for img in os.listdir('./assets/images/flyingsaucer'):
-            self.skin.append(pygame.image.load(os.path.join('./assets/images/flyingsaucer', img)))
+        self.assets = assets
+        self.skin = self.assets.images_in('images/flyingsaucer')
         self.rotation = 0
         self.updatable = level.updatable
         self.drawable = level.drawable   
@@ -91,7 +90,7 @@ class FlyingSaucer(CommonAlien):
     def shoot(self, x, y):
         if self.timer <= 0:
             #print(f"shooting{x}{y}")
-            shot = EnemyShoot(self.body.position.x, self.body.position.y, self.space, self.body.angle)
+            shot = EnemyShoot(self.body.position.x, self.body.position.y, self.space, self.body.angle, self.assets)
             self.updatable.add(shot)
             self.drawable.add(shot)
             shot.body.velocity = pymunk.Vec2d(1,0).rotated(self.body.angle) * 300

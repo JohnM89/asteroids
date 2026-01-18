@@ -7,7 +7,7 @@ from entities.circleshape import *
 from game.constants import *
 
 class Thrust(pygame.sprite.Sprite):
-    def __init__(self, player, contact_point, rotation):
+    def __init__(self, player, contact_point, rotation, assets):
 
         if hasattr(self, "containers"):
             super().__init__(self.containers)
@@ -15,8 +15,11 @@ class Thrust(pygame.sprite.Sprite):
             super().__init__()
         #self.explosions = []
         self.player = player
+        self.assets = assets
         #for img in os.listdir('./assets/sprites/ShotImpact/'):
-        self.base_image = pygame.image.load('./assets/source/Super Pixel Projectiles Pack 2/spritesheet/pj2_helix_beam_large_orange/spritesheet.png').convert_alpha()
+        # self.base_image = pygame.image.load('./assets/source/Super Pixel Projectiles Pack 2/spritesheet/pj2_helix_beam_large_orange/spritesheet.png').convert_alpha()
+        # self.base_image = pygame.image.load('./local_assets/assets/source/Super Pixel Projectiles Pack 2/spritesheet/pj2_helix_beam_large_orange/spritesheet.png').convert_alpha()
+        self.base_image = self.assets.image('source/Super Pixel Projectiles Pack 2/spritesheet/pj2_helix_beam_large_orange/spritesheet.png')
         self.radius = 32
         self.rotation = rotation
         #self.enemy_position = target.body.position

@@ -7,20 +7,13 @@ from game.constants import *
 from effects.debris import Debris
 #created in AsteroidField class
 class Asteroid(CircleShape):
-    def __init__(self, x, y, radius, space, level, kind):
+    def __init__(self, x, y, radius, space, level, kind, assets):
         super().__init__(x , y, radius)
-        self.meteor_types_small = []
-        self.meteor_types_medium = []
-        self.meteor_types_large = []
-        self.meteor_debris = []
-        for img in os.listdir('./assets/sprites/Asteroids_small'):
-            self.meteor_types_small.append(pygame.image.load(os.path.join('./assets/sprites/Asteroids_small', img)).convert_alpha())
-        for img in os.listdir('./assets/sprites/Asteroids_mid/'):
-             self.meteor_types_medium.append(pygame.image.load(os.path.join('./assets/sprites/Asteroids_mid', img)).convert_alpha())
-        for img in os.listdir('./assets/sprites/Asteroids_large'):
-            self.meteor_types_large.append(pygame.image.load(os.path.join('./assets/sprites/Asteroids_large', img)).convert_alpha())
-        for img in os.listdir('./assets/sprites/Asteroids_bits/'):
-            self.meteor_debris.append(pygame.image.load(os.path.join('./assets/sprites/Asteroids_bits/', img)).convert_alpha())
+        self.assets = assets
+        self.meteor_types_small = self.assets.images_in('sprites/Asteroids_small')
+        self.meteor_types_medium = self.assets.images_in('sprites/Asteroids_mid')
+        self.meteor_types_large = self.assets.images_in('sprites/Asteroids_large')
+        self.meteor_debris = self.assets.images_in('sprites/Asteroids_bits')
         self.kind = kind
         if self.kind == 1:
             self.base_image = random.choice(self.meteor_types_small)
@@ -60,7 +53,7 @@ class Asteroid(CircleShape):
         self.shape.game_object = self
         self.time_to_live = ASTEROID_TTL
         self.damage_accumulated = 0
-        self.split_threshold = 10 * self.radius
+        self.split_threshold = 5 * self.radius
         self.level = level
     
     #draw as circle with white colouring
@@ -112,10 +105,10 @@ class Asteroid(CircleShape):
             radius = self.radius - ASTEROID_MIN_RADIUS
             #create 2 new asteroids, add velocity and accelerate by 1.2 
             self.level.current_asteroid_count += 1
-            asteroid1 = Asteroid(spawn_point.x, spawn_point.y, radius, space, self.level, self.kind)
+            asteroid1 = Asteroid(spawn_point.x, spawn_point.y, radius, space, self.level, self.kind, self.assets)
             asteroid1.body.velocity = original_velocity + extra_velocity1
             self.level.current_asteroid_count += 1
-            asteroid2 = Asteroid(spawn_point.x, spawn_point.y, radius, space, self.level, self.kind)
+            asteroid2 = Asteroid(spawn_point.x, spawn_point.y, radius, space, self.level, self.kind, self.assets)
             asteroid2.body.velocity = original_velocity + extra_velocity2
             debris1 = Debris(spawn_point.x, spawn_point.y, space, self.body.angle, random.choice(self.meteor_debris))
             debris1.body.velocity = original_velocity + extra_velocity3

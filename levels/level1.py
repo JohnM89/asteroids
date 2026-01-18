@@ -35,6 +35,7 @@ class Level1(State):
         self.space = pymunk.Space()
         self.collision_manager = CollisionManager()
         self.space.gravity = (0,0)
+        self.assets = game.assets   
         self.player_sprite = player_sprite
         ###
         self.x = self.GAME_WIDTH / 2
@@ -50,25 +51,14 @@ class Level1(State):
         self.current_asteroid_count = 0
         ###
 
-        self.background_layer = pygame.image.load('./assets/source/Bright/blue_green.png').convert_alpha()        #for img in self.background_layers:
-        self.background_layer_stars1 = pygame.image.load('./assets/source/stars_blue.png').convert_alpha()
-        
-        self.background_layer_stars2 = pygame.image.load('./assets/source/stars_yellow.png').convert_alpha()
-        #self.background_layer_stars1 = pygame.transform.scale(self.background_layer_stars1, (GAME_HEIGHT, GAME_WIDTH))
-        #self.background_layer_stars2 = pygame.transform.scale(self.background_layer_stars2, (GAME_HEIGHT, GAME_WIDTH))
-        #self.background_layer_stars2 = pygame.transform.rotate(self.background_layer_stars2, 180)
-        #self.background_layer = pygame.transform.scale(self.background_layer, (GAME_HEIGHT, GAME_WIDTH))
-
-        self.background_layer_stars1 = pygame.transform.scale(self.background_layer_stars1, (GAME_WIDTH, GAME_HEIGHT))
-        self.background_layer_stars2 = pygame.transform.scale(self.background_layer_stars2, (GAME_WIDTH, GAME_HEIGHT))
+        self.background_layer = self.assets.image('source/Bright/blue_green.png', size=(GAME_WIDTH, GAME_HEIGHT))
+        self.background_layer_stars1 = self.assets.image('source/stars_blue.png', size=(GAME_WIDTH, GAME_HEIGHT))
+        self.background_layer_stars2 = self.assets.image('source/stars_yellow.png', size=(GAME_WIDTH, GAME_HEIGHT))
         self.background_layer_stars2 = pygame.transform.rotate(self.background_layer_stars2, 90)
-        self.background_layer = pygame.transform.scale(self.background_layer, (GAME_WIDTH, GAME_HEIGHT))
-        #self.canvas_background = pygame.image.load('./assets/images/layer2.png').convert_alpha()$
-        #self.canvas_background = pygame.transform.scale_by(self.canvas_background, 3)
        # self.hud_display = HeadsUp()
         ###
         self.hudd = {"score": 0, "lives": 99, "fuel": 100,"health": 100, "sheilds_health": 100}
-        self.hud_display = HeadsUp(256 + 8, self.SCREEN_HEIGHT - 16, 512, 256, hudd=self.hudd)
+        self.hud_display = HeadsUp(256 + 8, self.SCREEN_HEIGHT - 16, 512, 256, self.assets, hudd=self.hudd)
         self.walls = Walls(GAME_WIDTH, GAME_HEIGHT, self.space)
         self.walls.draw_walls()
         ###
@@ -81,10 +71,11 @@ class Level1(State):
         ###
         #self.asteroidfield = AsteroidField(self)
         self.alien_types = [Scourge, FlyingSaucer]
-        self.commonenemyspawns = Spawner(self, self.alien_types, self.aliens, self.scaling_factor, self.asteroid_spawn_rate, self.current_alien_count, self.alien_max_count, ALIEN_MAX_RADIUS, ALIEN_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ALIEN_KINDS)
-        self.asteroidfield = Spawner(self, Asteroid, self.asteroids, self.scaling_factor, self.asteroid_spawn_rate, self.current_asteroid_count, self.max_asteroids, ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ASTEROID_KINDS )
+        #link asset manager self.assets 
+        self.commonenemyspawns = Spawner(self, self.alien_types, self.aliens, self.scaling_factor, self.asteroid_spawn_rate, self.current_alien_count, self.alien_max_count, ALIEN_MAX_RADIUS, ALIEN_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ALIEN_KINDS, self.assets)
+        self.asteroidfield = Spawner(self, Asteroid, self.asteroids, self.scaling_factor, self.asteroid_spawn_rate, self.current_asteroid_count, self.max_asteroids, ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, GAME_HEIGHT, GAME_WIDTH, ASTEROID_KINDS, self.assets)
         ###
-        self.player = Player(self.player_sprite, self.x, self.y, self.shots, self.updatable, self.drawable, self.space, self.canvas)
+        self.player = Player(self.player_sprite, self.x, self.y, self.shots, self.updatable, self.drawable, self.space, self.canvas, self.assets)
 
         self.hudd["lives"] = self.player.lives
         self.hudd["score"] = self.score
@@ -127,7 +118,7 @@ class Level1(State):
                 for rotation in enemy.rotation_limit_list:
                     if rotation in space.constraints:
                         space.remove(rotation)
-            self.commonenemyspawns.current_alien_count -= 1
+            self.commonenemyspawns.current_count -= 1
             enemy.kill()
             self.create_drop(contact_pos, space, self.updatable, self.drawable)
             space.remove(enemy.body, enemy.shape)
@@ -165,8 +156,8 @@ class Level1(State):
         damage = self.impact_damage_check(impact_force)
         if arbiter.is_first_contact:
             self.enemy_damage_check(enemy, damage, contact_pos, space)
-            impact = RocketImpact(contact_pos, normal, enemy)
-            blood_splat = BloodSplat(contact_pos, normal)
+            impact = RocketImpact(contact_pos, normal, enemy, self.assets)
+            blood_splat = BloodSplat(contact_pos, normal, self.assets)
         self.updatable.add(impact, blood_splat)
         self.drawable.add(impact, blood_splat)
         rocket.kill()
@@ -179,7 +170,7 @@ class Level1(State):
         damage = self.impact_damage_check(impact_force)
         if arbiter.is_first_contact:
             self.asteroid_damage_check(asteroid, damage, impact_force, contact_pos, normal, space)
-            impact = RocketImpact(contact_pos, normal, asteroid)
+            impact = RocketImpact(contact_pos, normal, asteroid, self.assets)
             self.updatable.add(impact)
             self.drawable.add(impact)
             rocket.kill()
@@ -196,8 +187,8 @@ class Level1(State):
     def post_solve_s_e(self, shot, enemy, contact_pos, impact_force, normal, arbiter, space, data):
         damage = self.impact_damage_check(impact_force)
         self.enemy_damage_check(enemy, damage, contact_pos, space)
-        impact = ShotImpact(contact_pos, normal)
-        blood_splat = BloodSplat(contact_pos, normal)
+        impact = ShotImpact(contact_pos, normal, self.assets)
+        blood_splat = BloodSplat(contact_pos, normal, self.assets)
         self.updatable.add(impact, blood_splat)
         self.drawable.add(impact, blood_splat)
         shot.kill()
@@ -232,7 +223,7 @@ class Level1(State):
     def post_solve_s_a(self, asteroid, shot, contact_pos, impact_force, normal, arbiter, space, data):
         damage = self.impact_damage_check(impact_force)
         if arbiter.is_first_contact:
-            impact = ShotSplat(contact_pos, normal)
+            impact = ShotSplat(contact_pos, normal, self.assets)
             shot.kill()
             self.asteroid_damage_check(asteroid, damage, impact_force, contact_pos, normal, space)
             self.updatable.add(impact)
@@ -247,6 +238,7 @@ class Level1(State):
                 pickup_value = getattr(pickup, attr, 0)
                 current = getattr(player, attr, 0)
                 setattr(player, attr, current + pickup_value)
+                pickup.kill() 
                 #pickup.game_object.kill()
                 space.remove(pickup.body, pickup.shape)
         return False
@@ -286,7 +278,7 @@ class Level1(State):
         return True
     ###
     def create_drop(self, contact_pos, space, updatable, drawable):
-        drops = [FuelDrop(contact_pos.x,contact_pos.y, space), BombDrop(contact_pos.x,contact_pos.y, space), RocketDrop(contact_pos.x,contact_pos.y, space), YamatoCannon(contact_pos.x,contact_pos.y, space), SheildDrop(contact_pos.x,contact_pos.y, space), MultiShot(contact_pos.x,contact_pos.y, space)]
+        drops = [FuelDrop(contact_pos.x,contact_pos.y, space, self.assets), BombDrop(contact_pos.x,contact_pos.y, space, self.assets), RocketDrop(contact_pos.x,contact_pos.y, space, self.assets), YamatoCannon(contact_pos.x,contact_pos.y, space, self.assets), SheildDrop(contact_pos.x,contact_pos.y, space, self.assets), MultiShot(contact_pos.x,contact_pos.y, space, self.assets)]
         new_drop = random.choice(drops)
         updatable.add(new_drop)
         drawable.add(new_drop)

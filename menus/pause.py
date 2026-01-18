@@ -5,7 +5,8 @@ class Pause(State):
     def __init__(self, game): 
         super().__init__(game)
         self.hudd = {"State": "Paused"}
-        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Paused")
+        # self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Paused")
+        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./local_assets/assets/fonts/Fonts/GravityRegular5.ttf", "Paused")
         self.updatable.add(self.menu_box)
         self.drawable.add(self.menu_box)
 

@@ -10,8 +10,10 @@ class GameOver(State):
         self.score = score
         self.hudd = {"State": "Game Over"}
         self.player_input = ""
-        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Game Over!")
-        self.user_input = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 4, 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", self.player_input)
+        # self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", "Game Over!")
+        self.menu_box = UserInterface(self.SCREEN_WIDTH / 2 , self.SCREEN_HEIGHT / 2 , 256, 64, "GravityRegular5", "./local_assets/assets/fonts/Fonts/GravityRegular5.ttf", "Game Over!")
+        # self.user_input = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 4, 256, 64, "GravityRegular5", "./assets/fonts/Fonts/GravityRegular5.ttf", self.player_input)
+        self.user_input = UserInterface(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 4, 256, 64, "GravityRegular5", "./local_assets/assets/fonts/Fonts/GravityRegular5.ttf", self.player_input)
         self.updatable.add(self.menu_box, self.user_input)
         self.drawable.add(self.menu_box, self.user_input)
         self.active = True

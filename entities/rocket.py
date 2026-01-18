@@ -8,12 +8,13 @@ from game.raycast import RayCast
 from .enemies.commonalien import CommonAlien 
 
 class Rocket(CircleShape):
-    def __init__(self, x, y, space, rotation, canvas, updatable, drawable):
+    def __init__(self, x, y, space, rotation, canvas, updatable, drawable, assets):
         #set a rocket radius 
         super().__init__(x, y, 32, mass=0.75)
         self.canvas = canvas
         self.updatable = updatable
         self.drawable = drawable
+        self.assets = assets
         ###
         self.x = x  
         self.y = y
@@ -21,7 +22,9 @@ class Rocket(CircleShape):
         self.image = pygame.Surface((2*self.radius,2*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect(center=(x,y))
-        self.base_image = pygame.image.load("./assets/source/Super Pixel Projectiles Pack 2/spritesheet/pj2_scifi_missile_large_red/spritesheet.png") 
+        # self.base_image = pygame.image.load("./assets/source/Super Pixel Projectiles Pack 2/spritesheet/pj2_scifi_missile_large_red/spritesheet.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Super Pixel Projectiles Pack 2/spritesheet/pj2_scifi_missile_large_red/spritesheet.png")
+        self.base_image = self.assets.image("source/Super Pixel Projectiles Pack 2/spritesheet/pj2_scifi_missile_large_red/spritesheet.png") 
         self.sprite_image = self.base_image.copy()
         self.sprite_width = 64
         self.sprite_height = 32 
@@ -91,7 +94,7 @@ class Rocket(CircleShape):
         self.time_to_live -= dt
         if self.time_to_live < dt:
             self.kill()
-            explode = RocketTimeOut(int(self.body.position.x), int(self.body.position.y))
+            explode = RocketTimeOut(int(self.body.position.x), int(self.body.position.y), self.assets)
             self.updatable.add(explode)
             self.drawable.add(explode)
             self.space.remove(self.body, self.shape)

@@ -4,15 +4,17 @@ from entities.squareshape import *
 from .constants import *
 from .font import FontManager
 class HeadsUp(SquareShape):
-    def __init__(self, x, y, w, h, ui_text=None, key=None, hudd=None, sprite=None):
+    def __init__(self, x, y, w, h, assets, ui_text=None, key=None, hudd=None, sprite=None):
         super().__init__(x, y, w, h)
         self.font_size = 16
+        self.assets = assets    
         self.font = "GravityRegular5"
         self.h = h
         self.w = w
         self.x = x
         self.y = y
-        self.__path = './assets/fonts/Fonts/GravityRegular5.ttf'
+        # self.__path = './assets/fonts/Fonts/GravityRegular5.ttf'
+        self.__path = './local_assets/assets/fonts/Fonts/GravityRegular5.ttf'
         self.hudd = hudd
         self.max_health = 100
         self.max_fuel = 100
@@ -32,23 +34,44 @@ class HeadsUp(SquareShape):
         #    self.text = f"{self.ui_text}{self.hudd[self.key]}"
         #elif self.hudd == None:
         #    self.text = f"{self.ui_text}"
-        self.flask_sprites = []
+        self.flask_sprites = self.assets.images_in('sprites/flasks')
         self.image = pygame.Surface((w, h), pygame.SRCALPHA)
         self.rect = self.image.get_rect(center=(x, y))
-        self.player_icon = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Portraits/PlayerSmallFrame.png')
+        # self.player_icon = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Portraits/PlayerSmallFrame.png')
+        # self.player_icon = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Portraits/PlayerSmallFrame.png')
+        #
+        self.player_icon = self.assets.image('source/Pixel UI & HUD/Sprites/Portraits/PlayerSmallFrame.png')
         self.player_icon = pygame.transform.scale_by(self.player_icon, (3,3))
-        self.healthbarbackground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarBackground.png')
-        self.fuelbarbackground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryBackground.png')
-        self.sheildbackground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskBackground.png').convert_alpha()
+        # self.healthbarbackground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarBackground.png')
+        # self.healthbarbackground = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarBackground.png')
+        self.healthbarbackground = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarBackground.png')
+        # self.fuelbarbackground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryBackground.png')
+        # self.fuelbarbackground = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryBackground.png')
+        self.fuelbarbackground = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryBackground.png')
+        # self.sheildbackground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskBackground.png').convert_alpha()
+        # self.sheildbackground = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskBackground.png').convert_alpha()
+        self.sheildbackground = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskBackground.png')
         self.sheildbackground = pygame.transform.scale_by(self.sheildbackground, (3, 3))
-        self.sheildforeground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskForeground.png').convert_alpha()
-        self.fuelbarforeground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryForeground.png').convert_alpha()
+        # self.sheildforeground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskForeground.png').convert_alpha()
+        # self.sheildforeground = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskForeground.png').convert_alpha()
+        self.sheildforeground = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Blue/FlaskForeground.png')
+        # self.fuelbarforeground = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryForeground.png').convert_alpha()
+        # self.fuelbarforeground = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryForeground.png').convert_alpha()
+        self.fuelbarforeground = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryForeground.png')
         self.sheildforeground = pygame.transform.scale_by(self.sheildforeground, (3, 3))
-        for img in sorted(os.listdir('./assets/sprites/flasks')):
-            self.flask_sprites.append(pygame.image.load(os.path.join('./assets/sprites/flasks', img)))
-        self.healthbarfill = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFill.png')
-        self.fuelbarfill = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryFill.png')
-        self.healthbarfollowfill = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFollowFill.png')
+        # for img in sorted(os.listdir('./assets/sprites/flasks')):
+        #     self.flask_sprites.append(pygame.image.load(os.path.join('./assets/sprites/flasks', img)))
+        #for img in sorted(os.listdir('./local_assets/assets/sprites/flasks')):
+        #    self.flask_sprites.append(pygame.image.load(os.path.join('./local_assets/assets/sprites/flasks', img)))
+        # self.healthbarfill = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFill.png')
+        # self.healthbarfill = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFill.png')
+        self.healthbarfill = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFill.png')
+        # self.fuelbarfill = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryFill.png')
+        # self.fuelbarfill = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryFill.png')
+        self.fuelbarfill = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Red/FighterBarSecondaryFill.png')
+        # self.healthbarfollowfill = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFollowFill.png')
+        # self.healthbarfollowfill = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFollowFill.png')
+        self.healthbarfollowfill = self.assets.image('source/Pixel UI & HUD/Sprites/ValueBars/Red/RoundBarFollowFill.png')
         #self.healthbarfollowfill = pygame.transform.scale_by(self.healthbarfollowfill, (1, 4))
 
         #self.fuel

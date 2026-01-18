@@ -6,9 +6,10 @@ from .circleshape import *
 from game.constants import *
 
 class EnemyShot(CircleShape):
-    def __init__(self, x, y, space, rotation):
+    def __init__(self, x, y, space, rotation, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.1)
-        self.body.angle = rotation 
+        self.body.angle = rotation
+        self.assets = assets 
         self.image = pygame.Surface((5*self.radius, 5*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect()
@@ -16,7 +17,9 @@ class EnemyShot(CircleShape):
         self.shape.collision_type = 6
         self.shape.filter = pymunk.ShapeFilter(categories=ENEMY_BULLET_CATEGORY,mask=ENEMY_MASK)
         self.shape.game_object = self
-        self.base_image = pygame.image.load("./assets/source/Export/Projectiles/Variation C/Projectile_7_C.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Projectiles/Variation C/Projectile_7_C.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Projectiles/Variation C/Projectile_7_C.png")
+        self.base_image = self.assets.image("source/Export/Projectiles/Variation C/Projectile_7_C.png")
         self.base_image = pygame.transform.scale(self.base_image, (5*self.radius, 5*self.radius))
         self.sprite_image = self.base_image.copy()
         #self.sprite_width = 36

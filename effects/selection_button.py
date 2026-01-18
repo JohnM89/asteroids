@@ -15,7 +15,8 @@ class SelectionButton(pygame.sprite.Sprite):
             super().__init__()
         #self.explosions = []
         #for img in os.listdir('./assets/sprites/BombExplode/'):
-        self.sprite_image = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/Blue/ButtonDigital_Press.png').convert_alpha()
+        # self.sprite_image = pygame.image.load('./assets/source/Pixel UI & HUD/Sprites/Buttons/Blue/ButtonDigital_Press.png').convert_alpha()
+        self.sprite_image = pygame.image.load('./local_assets/assets/source/Pixel UI & HUD/Sprites/Buttons/Blue/ButtonDigital_Press.png').convert_alpha()
         self.radius = 400  
         self.image = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
         self.rect = self.image.get_rect(center=(x, y))

@@ -4,7 +4,7 @@ import os
 from entities.circleshape import *
 from game.constants import *
 
-class MeteorIntro(pygame.sprite.Sprite):
+class LoadIntro(pygame.sprite.Sprite):
     def __init__(self, title, x, y, radius):
 
         if hasattr(self, "containers"):

@@ -7,15 +7,21 @@ from entities.circleshape import *
 from game.constants import *
 
 class RocketImpact(pygame.sprite.Sprite):
-    def __init__(self, contact_point, rotation, target):
+    def __init__(self, contact_point, rotation, target, assets):
 
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
             super().__init__()
-        self.explosions = []
-        for img in os.listdir('./assets/sprites/RocketImpact/'):
-            self.explosions.append(pygame.image.load(os.path.join('./assets/sprites/RocketImpact/', img)))
+        self.assets = assets
+        # OLD: Load images manually with os.path.join + pygame.image.load
+        # for img in os.listdir('./assets/sprites/RocketImpact/'):
+        #     self.explosions.append(pygame.image.load(os.path.join('./assets/sprites/RocketImpact/', img)))
+        # for img in os.listdir('./local_assets/assets/sprites/RocketImpact/'):
+        #     self.explosions.append(pygame.image.load(os.path.join('./local_assets/assets/sprites/RocketImpact/', img)))
+
+        # NEW: Use AssetManager
+        self.explosions = self.assets.images_in('sprites/RocketImpact')
         self.radius = 48
         self.rotation = rotation
         self.enemy_position = target.body.position

@@ -10,13 +10,17 @@ from effects.explosions.rocket_timeout_explosion import RocketTimeOut
 from .enemies.commonalien import CommonAlien 
 
 class EnemyShoot(CircleShape):
-    def __init__(self, x, y, space, rotation):
+    def __init__(self, x, y, space, rotation, assets):
         #set a rocket radius 
         super().__init__(x, y, 16, mass=0.75)
         #self.canvas = canvas
+        self.assets = assets
         self.skins = []
-        for img in os.listdir('./assets/sprites/enemyshot'):
-            self.skins.append(pygame.image.load(os.path.join('./assets/sprites/enemyshot', img)))
+        # for img in os.listdir('./assets/sprites/enemyshot'):
+        #     self.skins.append(pygame.image.load(os.path.join('./assets/sprites/enemyshot', img)))
+        # for img in os.listdir('./local_assets/assets/sprites/enemyshot'):
+        #     self.skins.append(pygame.image.load(os.path.join('./local_assets/assets/sprites/enemyshot', img)))
+        self.skins = self.assets.images_in('sprites/enemyshot')
         #self.updatable = updatable
         #self.drawable = drawable
         ###

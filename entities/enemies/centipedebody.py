@@ -1,8 +1,9 @@
 from .commonalien import *
 import pymunk
 class CentipedeBody(CommonAlien):
-    def __init__(self, x, y, radius, space, colour=(255,255,255)):
+    def __init__(self, x, y, radius, space, assets, colour=(255,255,255)):
         super().__init__(x , y, radius, space, colour)
+        self.assets = assets
         self.shape.friction = 7.0
         self.shape.elasticity = 0.2
         self.shape.collision_type = 5
@@ -11,7 +12,9 @@ class CentipedeBody(CommonAlien):
         self.image = pygame.Surface((4*self.radius,4*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect(center=(x,y))
-        self.base_image = pygame.image.load("./assets/source/Export/Enemies - Insectoids/0.5x/Insectoid_Tail_2_B_Small.png")
+        # self.base_image = pygame.image.load("./assets/source/Export/Enemies - Insectoids/0.5x/Insectoid_Tail_2_B_Small.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Export/Enemies - Insectoids/0.5x/Insectoid_Tail_2_B_Small.png")
+        self.base_image = self.assets.image("source/Export/Enemies - Insectoids/0.5x/Insectoid_Tail_2_B_Small.png")
         self.base_image = pygame.transform.scale(self.base_image, (3*self.radius, 3*self.radius))
         self.sprite_image = self.base_image.copy()
         self.shape.filter = pymunk.ShapeFilter(categories=ENEMY_CENTIPEDE_BODY_CATEGORY, mask=ENEMY_CENTIPEDE_BODY_MASK)

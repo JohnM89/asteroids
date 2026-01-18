@@ -4,9 +4,10 @@ from .circleshape import *
 from game.constants import *
 
 class Shot(CircleShape):
-    def __init__(self, x, y, space, rotation):
+    def __init__(self, x, y, space, rotation, assets):
         super().__init__(x, y, SHOT_RADIUS, mass=0.5)
         self.body.angle = rotation
+        self.assets = assets
         self.image = pygame.Surface((5*self.radius, 5*self.radius), pygame.SRCALPHA)
         self.image = self.image.convert_alpha()  
         self.rect = self.image.get_rect(center=(x, y))
@@ -14,7 +15,9 @@ class Shot(CircleShape):
         self.shape.collision_type = 3
         self.shape.filter = pymunk.ShapeFilter(categories=PLAYER_BULLET_CATEGORY,mask=PLAYER_BULLET_MASK)
         self.shape.game_object = self
-        self.base_image = pygame.image.load("./assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/Spritesheets/bullet1-sheet.png")
+        # self.base_image = pygame.image.load("./assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/Spritesheets/bullet1-sheet.png")
+        # self.base_image = pygame.image.load("./local_assets/assets/source/Warped Collection Files/Assets/Space Shooters/Starfighter/Spritesheets/bullet1-sheet.png")
+        self.base_image = self.assets.image("source/Warped Collection Files/Assets/Space Shooters/Starfighter/Spritesheets/bullet1-sheet.png")
         self.base_image = pygame.transform.scale(self.base_image, (5*self.radius, 5*self.radius))
         self.base_image = pygame.transform.rotate(self.base_image, -90)
         self.sprite_image = self.base_image.copy()
